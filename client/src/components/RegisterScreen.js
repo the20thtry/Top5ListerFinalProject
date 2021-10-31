@@ -23,7 +23,7 @@ export default function RegisterScreen() {
     const handleSubmit = (event) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
-        Modal= auth.registerUser({
+        auth.registerUser({
             firstName: formData.get('firstName'),
             lastName: formData.get('lastName'),
             email: formData.get('email'),
@@ -31,6 +31,7 @@ export default function RegisterScreen() {
             passwordVerify: formData.get('passwordVerify'),
             items:[["Untitled","Item1","Item2","Item3","Item4","Item5"]]
         }, store);
+        
     };
 
     return (
