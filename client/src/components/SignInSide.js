@@ -15,6 +15,8 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useContext } from 'react';
 import AuthContext from '../auth'
 import { GlobalStoreContext } from '../store'
+import AlertDialog from "./AlertDialog";
+
 
 
 function Copyright(props) {
@@ -29,6 +31,8 @@ function Copyright(props) {
     </Typography>
   );
 }
+let Modal=<AlertDialog></AlertDialog>
+
 
 const theme = createTheme();
 
@@ -127,6 +131,7 @@ export default function SignInSide() {
               <Copyright sx={{ mt: 5 }} />
             </Box>
           </Box>
+          {Modal}
         </Grid>
       </Grid>
     </ThemeProvider>

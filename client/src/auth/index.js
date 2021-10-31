@@ -1,6 +1,9 @@
 import React, { createContext, useEffect, useState } from "react";
 import { useHistory } from 'react-router-dom'
 import api from '../api'
+import AlertDialog from "../components/AlertDialog";
+
+
 
 const AuthContext = createContext();
 console.log("create AuthContext: " + AuthContext);
@@ -63,30 +66,43 @@ function AuthContextProvider(props) {
     }
 
     auth.registerUser = async function(userData, store) {
-        const response = await api.registerUser(userData);      
-        if (response.status === 200) {
-            authReducer({
-                type: AuthActionType.REGISTER_USER,
-                payload: {
-                    user: response.data.user
-                }
-            })
-            history.push("/");
-            store.loadIdNamePairs();
+        try{
+            const response = await api.registerUser(userData);      
+            if (response.status === 200) {
+                authReducer({
+                    type: AuthActionType.REGISTER_USER,
+                    payload: {
+                        user: response.data.user
+                    }
+                })
+                history.push("/");
+                store.loadIdNamePairs();
+            }
+        }
+        catch{
+            console.log("User not registered, invalid inputs")
+            console.log(document.getElementsByClassName("MuiButton-root MuiButton-invisible MuiButton-invisiblePrimary MuiButton-sizeMedium MuiButton-invisibleSizeMedium MuiButtonBase-root css-1w1rijm-MuiButtonBase-root-MuiButton-root")[0].click())
         }
     }
     auth.logIn = async function(userData, store) {
-        const response = await api.loginUser(userData);
-        if (response.status === 200) {
-            authReducer({
-                type: AuthActionType.REGISTER_USER,
-                payload: {
-                    user: response.data.user
-                }
-            })
-            history.push("/");
-            store.loadIdNamePairs();
+        try{
+            const response = await api.loginUser(userData);
+            if (response.status === 200) {
+                authReducer({
+                    type: AuthActionType.REGISTER_USER,
+                    payload: {
+                        user: response.data.user
+                    }
+                })
+                history.push("/");
+                store.loadIdNamePairs();
+            }
         }
+        catch{
+            console.log("User not logged in, invalid inputs")
+            console.log(document.getElementsByClassName("MuiButton-root MuiButton-invisible MuiButton-invisiblePrimary MuiButton-sizeMedium MuiButton-invisibleSizeMedium MuiButtonBase-root css-1w1rijm-MuiButtonBase-root-MuiButton-root")[0].click())
+        }
+
     }
 
 
