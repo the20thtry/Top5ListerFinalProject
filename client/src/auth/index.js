@@ -1,6 +1,7 @@
 import React, { createContext, useEffect, useState } from "react";
 import { useHistory } from 'react-router-dom'
 import api from '../api'
+
 import AlertDialog from "../components/AlertDialog";
 
 
@@ -12,7 +13,8 @@ console.log("create AuthContext: " + AuthContext);
 export const AuthActionType = {
     GET_LOGGED_IN: "GET_LOGGED_IN",
     REGISTER_USER: "REGISTER_USER",
-    LOG_IN: "LOG_IN"
+    LOG_IN: "LOG_IN",
+    LOG_OUT:"LOG_OUT"
 }
 
 function AuthContextProvider(props) {
@@ -46,6 +48,12 @@ function AuthContextProvider(props) {
                     user: payload.user,
                     loggedIn: true
                 })
+            }            
+            case AuthActionType.LOG_OUT:{
+                return setAuth({
+                    user: null,
+                    loggedIn: false
+                })
             }
             default:
                 return auth;
@@ -62,6 +70,7 @@ function AuthContextProvider(props) {
                     user: response.data.user
                 }
             });
+
         }
     }
 
@@ -101,6 +110,24 @@ function AuthContextProvider(props) {
         catch{
             console.log("User not logged in, invalid inputs")
             console.log(document.getElementsByClassName("MuiButton-root MuiButton-invisible MuiButton-invisiblePrimary MuiButton-sizeMedium MuiButton-invisibleSizeMedium MuiButtonBase-root css-1w1rijm-MuiButtonBase-root-MuiButton-root")[0].click())
+        }
+
+    }
+
+    auth.logoutUser = async function() {
+        try{
+            const response = await api.logoutUser();
+            console.log(response)
+            if (response.status === 200) {
+                authReducer({
+                    type: AuthActionType.LOG_OUT,
+                    payload: {
+                    }
+                })
+            }
+        }
+        catch{
+            console.log("user not successfully logged out??")
         }
 
     }

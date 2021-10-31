@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import AccountCircle from '@mui/icons-material/AccountCircle';
+import { SSL_OP_COOKIE_EXCHANGE } from 'constants';
 
 export default function AppBanner() {
     const { auth } = useContext(AuthContext);
@@ -55,6 +56,7 @@ export default function AppBanner() {
     );
     const loggedInMenu = 
         <Menu
+            
             anchorEl={anchorEl}
             anchorOrigin={{
                 vertical: 'top',
@@ -69,7 +71,7 @@ export default function AppBanner() {
             open={isMenuOpen}
             onClose={handleMenuClose}
         >
-            <MenuItem onClick={handleLogout}>Logout</MenuItem>
+            <MenuItem onClick={handleLogout} >Logout</MenuItem>
         </Menu>        
 
     let editToolbar = "";
@@ -82,7 +84,15 @@ export default function AppBanner() {
     }
     
     function getAccountMenu(loggedIn) {
-        return <AccountCircle />;
+        console.log()
+        if (!loggedIn){
+            return <AccountCircle> </AccountCircle>;
+        }
+        else{
+            let x= auth.user.firstName.charAt(0)
+            let y= auth.user.lastName.charAt(0)
+            return x+y
+        }
     }
 
     return (
