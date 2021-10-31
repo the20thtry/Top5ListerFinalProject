@@ -25,9 +25,9 @@ export default function RegisterScreen() {
             lastName: formData.get('lastName'),
             email: formData.get('email'),
             password: formData.get('password'),
-            passwordVerify: formData.get('passwordVerify')
+            passwordVerify: formData.get('passwordVerify'),
+            items:[["Untitled","Item1","Item2","Item3","Item4","Item5"]]
         }, store);
-        console.log("11")
     };
 
     return (

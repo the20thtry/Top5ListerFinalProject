@@ -8,9 +8,10 @@ import {
     HomeWrapper,
     RegisterScreen,
     Statusbar,
-    WorkspaceScreen
+    WorkspaceScreen,
 } from './components'
 import { loginUser } from './api';
+import SignInSide from './components/SignInSide';
 /*
     This is our application's top-level component.
     
@@ -32,7 +33,7 @@ const App = () => {
                         <Route path="/" exact component={HomeWrapper} />
                         <Route path="/register/" exact component={RegisterScreen} />
                         <Route path="/top5list/:id" exact component={WorkspaceScreen} />
-                        <Route path="/login/" exact component={LoginScreen} />
+                        <Route path="/login/" exact component={SignInSide} />
                     </Switch>
                     <Statusbar />
                 </GlobalStoreContextProvider>

@@ -10,15 +10,60 @@ getLoggedIn = async (req, res) => {
             user: {
                 firstName: loggedInUser.firstName,
                 lastName: loggedInUser.lastName,
-                email: loggedInUser.email
+                email: loggedInUser.email,
+                items: loggedInUser.items
             }
-        }).send();
+        })//.send() //I got rid of it and it got rid of some bugs but idk if this is smart
     })
+}
+
+login = async (req, res) => {
+    try{
+        const { email, password} = req.body;
+        const existingUser = await User.findOne({ email: email });
+        if(existingUser){
+            correctPassword = await (bcrypt.compare(password,existingUser.passwordHash))
+                if (!correctPassword) {
+                    console.log("wrong password")
+                    return res
+                        .status(400)
+                        .json({
+                            success: false,
+                            errorMessage: "Invalid Email/Passwords"
+                        })
+                }
+                else{
+                    const token = auth.signToken(existingUser);
+                    await res.cookie("token", token, {
+                        httpOnly: true,
+                        secure: true,
+                        sameSite: "none"
+                    }).status(200).json({
+                        success: true,
+                        user: {
+                            firstName: existingUser.firstName,
+                            lastName: existingUser.lastName,
+                            email: existingUser.email,
+                            items: existingUser.items
+                        }
+                    }).send();
+                }
+            }
+        else {
+            console.log("Invalid Email/Passwords")
+        }
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).send();
+    }
+    
+
 }
 
 registerUser = async (req, res) => {
     try {
-        const { firstName, lastName, email, password, passwordVerify } = req.body;
+        const { firstName, lastName, email, password, passwordVerify, items} = req.body;
         if (!firstName || !lastName || !email || !password || !passwordVerify) {
             return res
                 .status(400)
@@ -53,7 +98,7 @@ registerUser = async (req, res) => {
         const passwordHash = await bcrypt.hash(password, salt);
 
         const newUser = new User({
-            firstName, lastName, email, passwordHash
+            firstName, lastName, email, passwordHash,items
         });
         const savedUser = await newUser.save();
 
@@ -69,7 +114,8 @@ registerUser = async (req, res) => {
             user: {
                 firstName: savedUser.firstName,
                 lastName: savedUser.lastName,
-                email: savedUser.email
+                email: savedUser.email,
+                items: savedUser.items
             }
         }).send();
     } catch (err) {
@@ -80,5 +126,6 @@ registerUser = async (req, res) => {
 
 module.exports = {
     getLoggedIn,
-    registerUser
+    registerUser,
+    login
 }
