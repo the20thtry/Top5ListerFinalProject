@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs')
 //copy pasted updateTop5List and changed some variables
 updateUser = async (req, res) => {
     const body = req.body
-    console.log("updateUser: " + JSON.stringify(body));
+    console.log("User to be updated: " + JSON.stringify(body));
     if (!body) {
         return res.status(400).json({
             success: false,

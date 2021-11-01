@@ -160,6 +160,25 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+    //takes the temporary list and returns a reformatted [[]] that we can use as item for updating the user
+    //gets all top5listnamepairs and the items which come with them
+    store.reformatAllTop5Lists = async function (){
+        let result=[]
+        let temp
+        let response =await api.getAllTop5Lists()
+        let allTop5Lists= response.data.data
+        for(let i =0; i< allTop5Lists.length;i++){
+            temp=(["Placeholder", allTop5Lists[i].name])
+            for(let j =0; j< 5;j++){
+                temp.push(allTop5Lists[i].items[j])
+            }
+            console.log(temp)
+            result.push(temp)
+        }
+
+        return result
+    }
+
     // THESE ARE THE FUNCTIONS THAT WILL UPDATE OUR STORE AND
     // DRIVE THE STATE OF THE APPLICATION. WE'LL CALL THESE IN 
     // RESPONSE TO EVENTS INSIDE OUR COMPONENTS.
@@ -189,8 +208,11 @@ function GlobalStoreContextProvider(props) {
                     getListPairs(top5List);
                 }
             }
-            updateList(top5List);
+            await updateList(top5List);
         }
+        let item=await store.reformatAllTop5Lists()
+        console.log(item)
+        api.updateUser(auth.user.email, item)
     }
 
 
@@ -222,7 +244,6 @@ function GlobalStoreContextProvider(props) {
                 payload: newList
             }
             );
-            console.log(auth.user.email)
             let item=auth.user.items
             item.push([1,2,3,4,5,6,7])
             api.updateUser(auth.user.email, item)
@@ -241,7 +262,6 @@ function GlobalStoreContextProvider(props) {
             let top5ListsResponse= await api.getAllTop5Lists()
             if(top5ListsResponse){
                 for(let i=0;i<top5ListsResponse.data.data.length;i++){
-                    console.log(top5ListsResponse.data.data[i]._id)
                     await api.deleteTop5ListById(top5ListsResponse.data.data[i]._id)
                 }
                 for(let i=0;i<lists.length;i++){
@@ -251,18 +271,17 @@ function GlobalStoreContextProvider(props) {
                     }
                     await api.createTop5List(top5List)
                 }
+                const response = await api.getTop5ListPairs();
+                if (response.data.success) {
+                    let pairsArray = response.data.idNamePairs;
+                    storeReducer({
+                        type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
+                        payload: pairsArray
+                    });
+                }
             }
-
         }
 
-        const response = await api.getTop5ListPairs();
-        if (response.data.success) {
-            let pairsArray = response.data.idNamePairs;
-            storeReducer({
-                type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
-                payload: pairsArray
-            });
-        }
         else {
             console.log("API FAILED TO GET THE LIST PAIRS");
         }
