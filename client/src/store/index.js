@@ -172,11 +172,26 @@ function GlobalStoreContextProvider(props) {
             for(let j =0; j< 5;j++){
                 temp.push(allTop5Lists[i].items[j])
             }
-            console.log(temp)
             result.push(temp)
         }
-
         return result
+    }
+
+    store.updateTempTop5Lists = async function () {
+        let lists= auth.user.items
+        let top5ListsResponse= await api.getAllTop5Lists()
+        if(top5ListsResponse){
+            for(let i=0;i<top5ListsResponse.data.data.length;i++){
+                await api.deleteTop5ListById(top5ListsResponse.data.data[i]._id)
+            }
+            for(let i=0;i<lists.length;i++){
+                let top5List={
+                    name:auth.user.items[i][1],
+                    items:auth.user.items[i].slice(2)
+                }
+                await api.createTop5List(top5List)
+            }
+        }    
     }
 
     // THESE ARE THE FUNCTIONS THAT WILL UPDATE OUR STORE AND
@@ -258,19 +273,7 @@ function GlobalStoreContextProvider(props) {
     // THIS FUNCTION LOADS ALL THE ID, NAME PAIRS SO WE CAN LIST ALL THE LISTS
     store.loadIdNamePairs = async function () {
         if(auth.user){
-            let lists= auth.user.items
-            let top5ListsResponse= await api.getAllTop5Lists()
-            if(top5ListsResponse){
-                for(let i=0;i<top5ListsResponse.data.data.length;i++){
-                    await api.deleteTop5ListById(top5ListsResponse.data.data[i]._id)
-                }
-                for(let i=0;i<lists.length;i++){
-                    let top5List={
-                        name:auth.user.items[i][1],
-                        items:auth.user.items[i].slice(2)
-                    }
-                    await api.createTop5List(top5List)
-                }
+                await store.updateTempTop5Lists()
                 const response = await api.getTop5ListPairs();
                 if (response.data.success) {
                     let pairsArray = response.data.idNamePairs;
@@ -279,7 +282,6 @@ function GlobalStoreContextProvider(props) {
                         payload: pairsArray
                     });
                 }
-            }
         }
 
         else {
@@ -342,7 +344,7 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
-    store.addMoveItemTransaction = function (start, end) {
+    store.addMoveItemTransaction =  function (start, end) {
         let transaction = new MoveItem_Transaction(store, start, end);
         tps.addTransaction(transaction);
     }
@@ -353,7 +355,7 @@ function GlobalStoreContextProvider(props) {
         tps.addTransaction(transaction);
     }
 
-    store.moveItem = function (start, end) {
+    store.moveItem = async function (start, end) {
         start -= 1;
         end -= 1;
         if (start < end) {
@@ -372,7 +374,10 @@ function GlobalStoreContextProvider(props) {
         }
 
         // NOW MAKE IT OFFICIAL
-        store.updateCurrentList();
+        await store.updateCurrentList();
+        let item= await store.reformatAllTop5Lists()
+        console.log(item)
+        api.updateUser(auth.user.email, item)
     }
 
     store.updateItem = function (index, newItem) {
