@@ -1,5 +1,6 @@
 import React, { createContext, useEffect, useState } from "react";
 import { useHistory } from 'react-router-dom'
+import { isUndefined } from "util";
 import api from '../api'
 
 import AlertDialog from "../components/AlertDialog";
@@ -85,12 +86,15 @@ function AuthContextProvider(props) {
                     }
                 })
                 history.push("/");
-                store.loadIdNamePairs();
+                //store.loadIdNamePairs();
             }
         }
         catch{
-            console.log("User not registered, invalid inputs")
-            console.log(document.getElementsByClassName("MuiButton-root MuiButton-invisible MuiButton-invisiblePrimary MuiButton-sizeMedium MuiButton-invisibleSizeMedium MuiButtonBase-root css-1w1rijm-MuiButtonBase-root-MuiButton-root")[0].click())
+            let name ="MuiButton-root MuiButton-invisible MuiButton-invisiblePrimary MuiButton-sizeMedium MuiButton-invisibleSizeMedium MuiButtonBase-root css-1w1rijm-MuiButtonBase-root-MuiButton-root"
+            if(document.getElementsByClassName(name).length==1){
+                console.log("User not logged in, invalid inputs")
+                console.log(document.getElementsByClassName(name)[0].click())
+            }
         }
     }
     auth.logIn = async function(userData, store) {
@@ -104,12 +108,16 @@ function AuthContextProvider(props) {
                     }
                 })
                 history.push("/");
-                store.loadIdNamePairs();
+                //store.loadIdNamePairs();
             }
         }
         catch{
-            console.log("User not logged in, invalid inputs")
-            console.log(document.getElementsByClassName("MuiButton-root MuiButton-invisible MuiButton-invisiblePrimary MuiButton-sizeMedium MuiButton-invisibleSizeMedium MuiButtonBase-root css-1w1rijm-MuiButtonBase-root-MuiButton-root")[0].click())
+            let name="MuiButton-root MuiButton-invisible MuiButton-invisiblePrimary MuiButton-sizeMedium MuiButton-invisibleSizeMedium MuiButtonBase-root css-1w1rijm-MuiButtonBase-root-MuiButton-root"
+            if(document.getElementsByClassName(name).length==1){
+                console.log("User not logged in, invalid inputs")
+                console.log(document.getElementsByClassName(name)[0].click())
+            }
+            
         }
 
     }
@@ -117,7 +125,6 @@ function AuthContextProvider(props) {
     auth.logoutUser = async function() {
         try{
             const response = await api.logoutUser();
-            console.log(response)
             if (response.status === 200) {
                 authReducer({
                     type: AuthActionType.LOG_OUT,

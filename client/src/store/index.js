@@ -222,7 +222,10 @@ function GlobalStoreContextProvider(props) {
                 payload: newList
             }
             );
-
+            console.log(auth.user.email)
+            let item=auth.user.items
+            item.push([1,2,3,4,5,6,7])
+            api.updateUser(auth.user.email, item)
             // IF IT'S A VALID LIST THEN LET'S START EDITING IT
             history.push("/top5list/" + newList._id);
         }
@@ -233,6 +236,25 @@ function GlobalStoreContextProvider(props) {
 
     // THIS FUNCTION LOADS ALL THE ID, NAME PAIRS SO WE CAN LIST ALL THE LISTS
     store.loadIdNamePairs = async function () {
+        if(auth.user){
+            let lists= auth.user.items
+            let top5ListsResponse= await api.getAllTop5Lists()
+            if(top5ListsResponse){
+                for(let i=0;i<top5ListsResponse.data.data.length;i++){
+                    console.log(top5ListsResponse.data.data[i]._id)
+                    await api.deleteTop5ListById(top5ListsResponse.data.data[i]._id)
+                }
+                for(let i=0;i<lists.length;i++){
+                    let top5List={
+                        name:auth.user.items[i][1],
+                        items:auth.user.items[i].slice(2)
+                    }
+                    await api.createTop5List(top5List)
+                }
+            }
+
+        }
+
         const response = await api.getTop5ListPairs();
         if (response.data.success) {
             let pairsArray = response.data.idNamePairs;
