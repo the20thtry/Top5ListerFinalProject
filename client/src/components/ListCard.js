@@ -6,6 +6,8 @@ import ListItem from '@mui/material/ListItem';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ResponsiveDialog from "./deleteModal";
+
 
 /*
     This is a card in our list of top 5 lists. It lets select
@@ -78,11 +80,7 @@ function ListCard(props) {
                     </IconButton>
                 </Box>
                 <Box sx={{ p: 1 }}>
-                    <IconButton onClick={(event) => {
-                        handleDeleteList(event, idNamePair._id)
-                    }} aria-label='delete'>
-                        <DeleteIcon style={{fontSize:'48pt'}} />
-                    </IconButton>
+                    <ResponsiveDialog></ResponsiveDialog>
                 </Box>
         </ListItem>
 

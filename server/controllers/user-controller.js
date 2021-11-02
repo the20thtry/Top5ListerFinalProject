@@ -28,7 +28,7 @@ updateUser = async (req, res) => {
                 console.log("SUCCESS!!!");
                 return res.status(200).json({
                     success: true,
-                    id: top5List._id,
+                    user: user,
                     message: 'user info updated!',
                 })
             })
@@ -40,6 +40,7 @@ updateUser = async (req, res) => {
                 })
             })
     })
+    
 }
 
 
