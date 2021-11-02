@@ -245,7 +245,8 @@ function GlobalStoreContextProvider(props) {
         let item=await store.reformatAllTop5Lists()
         console.log(item)
         let newUserData= await api.updateUser(auth.user.email, item)
-        auth.user=newUserData.data.user    }
+        auth.user=newUserData.data.user    
+    }
 
 
     // THIS FUNCTION PROCESSES CLOSING THE CURRENTLY LOADED LIST
@@ -374,13 +375,20 @@ function GlobalStoreContextProvider(props) {
 
     store.addMoveItemTransaction =  function (start, end) {
         let transaction = new MoveItem_Transaction(store, start, end);
-        tps.addTransaction(transaction);
+        tps.addTransaction(transaction);    
+        console.log(tps)
+        console.log(store.canUndo())
+        console.log(store.canRedo())
+
+
     }
 
     store.addUpdateItemTransaction = function (index, newText) {
         let oldText = store.currentList.items[index];
         let transaction = new UpdateItem_Transaction(store, index, oldText, newText);
         tps.addTransaction(transaction);
+        console.log(tps)
+        console.log(store.canUndo())
     }
 
     store.moveItem = async function (start, end) {
