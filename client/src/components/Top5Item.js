@@ -18,6 +18,7 @@ function Top5Item(props) {
     const [draggedTo, setDraggedTo] = useState(0);
 
     function handleDragStart(event, targetId) {
+        targetId= event.target.id.substring(event.target.id.indexOf("-") + 1);
         event.dataTransfer.setData("item", targetId);
     }
 
@@ -41,6 +42,7 @@ function Top5Item(props) {
         event.preventDefault();
         let sourceId = event.dataTransfer.getData("item");
         sourceId = sourceId.substring(sourceId.indexOf("-") + 1);
+        targetId=event.target.id.substring(event.target.id.indexOf("-") + 1);
         setDraggedTo(false);
 
         console.log("handleDrop (sourceId, targetId): ( " + sourceId + ", " + targetId + ")");
@@ -79,7 +81,6 @@ function Top5Item(props) {
     let { index } = props;
     if (editActive) {
         return (
-            
             <TextField
             margin="normal"
             required
@@ -114,7 +115,6 @@ function Top5Item(props) {
                 draggable="true"
             >
             <Box sx={{ p: 1 }}>
-
             <EditIcon 
                 style={{fontSize:'48pt'}}
                 aria-label='edit'
@@ -126,10 +126,7 @@ function Top5Item(props) {
                 value={"\u270E"}
             />
             </Box>
-
-
-                
-                {props.text}
+            {props.text}
             </div>)
     }
 }
