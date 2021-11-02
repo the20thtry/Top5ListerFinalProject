@@ -80,7 +80,7 @@ function ListCard(props) {
                     </IconButton>
                 </Box>
                 <Box sx={{ p: 1 }}>
-                    <ResponsiveDialog></ResponsiveDialog>
+                    <ResponsiveDialog>  </ResponsiveDialog>
                 </Box>
         </ListItem>
 

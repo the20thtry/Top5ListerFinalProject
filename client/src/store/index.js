@@ -407,9 +407,13 @@ function GlobalStoreContextProvider(props) {
         let newUserData= await api.updateUser(auth.user.email, item)
         auth.user=newUserData.data.user    }
 
-    store.updateItem = function (index, newItem) {
+    store.updateItem = async function (index, newItem) {
         store.currentList.items[index] = newItem;
-        store.updateCurrentList();
+        await store.updateCurrentList();
+        let item= await store.reformatAllTop5Lists()
+        console.log(item)
+        let newUserData= await api.updateUser(auth.user.email, item)
+        auth.user=newUserData.data.user
     }
 
     store.updateCurrentList = async function () {
