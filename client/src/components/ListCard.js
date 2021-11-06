@@ -58,6 +58,10 @@ function ListCard(props) {
         setText(event.target.value);
     }
 
+    if(store.currentList){
+        
+    }
+
     let cardElement =
         <ListItem
             id={idNamePair._id}
