@@ -79,7 +79,13 @@ export default function AppBanner() {
     if (auth.loggedIn) {
         menu = loggedInMenu;
         if (store.currentList) {
-            editToolbar = <EditToolbar />;
+            let x=document.getElementsByClassName("MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button css-umtevz-MuiButtonBase-root-MuiListItem-root")
+            console.log(x.length)
+            if(x.length==0){
+                editToolbar = <EditToolbar />;
+
+            }
+
         }
     }
     
