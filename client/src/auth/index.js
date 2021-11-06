@@ -107,8 +107,8 @@ function AuthContextProvider(props) {
                         user: response.data.user
                     }
                 })
+                //await store.updateTempTop5Lists()
                 history.push("/");
-                //store.loadIdNamePairs();
             }
         }
         catch{
@@ -117,7 +117,6 @@ function AuthContextProvider(props) {
                 console.log("User not logged in, invalid inputs")
                 console.log(document.getElementsByClassName(name)[0].click())
             }
-            
         }
 
     }

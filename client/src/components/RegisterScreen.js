@@ -31,6 +31,7 @@ export default function RegisterScreen() {
             passwordVerify: formData.get('passwordVerify'),
             items:[["0","Untitled","Item1","Item2","Item3","Item4","Item5"]] //id, list name, list elements
         }, store);
+
         
     };
 

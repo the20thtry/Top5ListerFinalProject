@@ -4,23 +4,28 @@ import ListCard from './ListCard.js'
 import { Fab, Typography } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add';
 import List from '@mui/material/List';
+import AuthContext from '../auth'
+
 /*
     This React component lists all the top5 lists in the UI.
     
     @author McKilla Gorilla
 */
 const HomeScreen = () => {
+    const { auth } = useContext(AuthContext);
     const { store } = useContext(GlobalStoreContext);
 
     useEffect(() => {
         store.loadIdNamePairs();
+        console.log(store.idNamePairs)
+        console.log(auth.user.items)
     }, []);
 
     function handleCreateNewList() {
         store.createNewList();
     }
     let listCard = "";
-    if (store) {
+    if (store && (store.idNamePairs.length==auth.user.items.length)) {
         listCard = 
             <List sx={{ width: '90%', left: '5%', bgcolor: 'background.paper' }}>
             {

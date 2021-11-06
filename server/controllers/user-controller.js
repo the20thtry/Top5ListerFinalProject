@@ -84,8 +84,8 @@ login = async (req, res) => {
                         .status(400)
                         .json({
                             success: false,
-                            errorMessage: "Invalid Email/Passwords"
-                        })
+                            errorMessage: "Invalid Email/Passwords?"
+                        }).send()
                 }
                 else{
                     const token = auth.signToken(existingUser);
@@ -106,6 +106,12 @@ login = async (req, res) => {
             }
         else {
             console.log("Invalid Email/Passwords")
+            return res
+                .status(400)
+                .json({
+                    success: false,
+                    errorMessage: "Invalid Email/Passwords"
+                }).send()
         }
     }
     catch (err) {
