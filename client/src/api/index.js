@@ -48,7 +48,6 @@ const apis = {
     loginUser,
     logoutUser,
     updateUser
-
 }
 
 export default apis
