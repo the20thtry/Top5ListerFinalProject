@@ -3,6 +3,9 @@ import Top5Item from './Top5Item.js'
 import List from '@mui/material/List';
 import { Typography } from '@mui/material'
 import { GlobalStoreContext } from '../store/index.js'
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import { Button } from '@mui/material';
 /*
     This React component lets us edit a loaded list, which only
     happens when we are on the proper route.
@@ -12,6 +15,21 @@ import { GlobalStoreContext } from '../store/index.js'
 function WorkspaceScreen() {
     const { store } = useContext(GlobalStoreContext);
 
+    let listName=store.currentList.name
+    function FullWidthTextField() {
+        return (
+          <Box
+            sx={{
+              width: 500,
+              maxWidth: '100%',
+              marginRight:5,
+              backgroundColor:"white"
+            }}
+          >
+            <TextField fullWidth label={listName} id="fullWidth" defaultValue={listName} />
+          </Box>
+        );
+      }
     let editItems = "";
     if (store.currentList) {
         editItems = 
@@ -29,6 +47,7 @@ function WorkspaceScreen() {
     }
     return (
         <div id="top5-workspace">
+            <FullWidthTextField></FullWidthTextField>
             <div id="workspace-edit">
                 <div id="edit-numbering">
                     <div className="item-number"><Typography variant="h3">1.</Typography></div>
@@ -38,6 +57,12 @@ function WorkspaceScreen() {
                     <div className="item-number"><Typography variant="h3">5.</Typography></div>
                 </div>
                 {editItems}
+            </div>
+            <div className="save-publish-div">
+                <Button class='save-button'>save</Button>
+
+                <Button class='publish-button'>Publish </Button>
+
             </div>
         </div>
     )

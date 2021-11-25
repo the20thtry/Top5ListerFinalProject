@@ -1,7 +1,8 @@
 import { useContext } from 'react'
 import { GlobalStoreContext } from '../store'
-import { Typography } from '@mui/material'
 import AuthContext from '../auth'
+import { Fab, Typography } from '@mui/material'
+import AddIcon from '@mui/icons-material/Add';
 
 
 
@@ -14,16 +15,35 @@ function Statusbar() {
     const { auth } = useContext(AuthContext);
     const { store } = useContext(GlobalStoreContext);
     let text ="";
-    if (store.currentList && auth.loggedIn){
-        if (store.currentList.name){
+    function handleCreateNewList() {
+        store.createNewList();
+    }
+    if (auth.loggedIn){
+        if (store.currentList && store.currentList.name){
             text = store.currentList.name;
             //console.log(store.currentList.name)
         }
+        else{
+            text = <div >
+            <Fab 
+                color="primary" 
+                aria-label="add"
+                id="add-list-button"
+                onClick={handleCreateNewList}
+            >
+                <AddIcon />
+            </Fab>
+                <Typography variant="h4">Your Lists</Typography>
+            </div>
+        }
+    }
+    else{
+        //some guest stuffs??
     }
     
     return (
         <div id="top5-statusbar">
-            <Typography variant="h4">{text}</Typography>
+            <Typography variant="h3">{text}</Typography>
         </div>
     );
 }

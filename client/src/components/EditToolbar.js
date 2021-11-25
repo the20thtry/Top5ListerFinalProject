@@ -27,6 +27,8 @@ function EditToolbar() {
     if (store.isListNameEditActive) {
         editStatus = true;
     }  
+
+
     return (
         <div id="edit-toolbar">
             <Button 

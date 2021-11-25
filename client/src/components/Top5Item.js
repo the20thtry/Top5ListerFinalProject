@@ -116,7 +116,7 @@ function Top5Item(props) {
             >
             <Box sx={{ p: 1 }}>
             <EditIcon 
-                style={{fontSize:'48pt'}}
+                style={{fontSize:'36pt'}}
                 aria-label='edit'
                 disabled={editStatus}
                 type="button"
