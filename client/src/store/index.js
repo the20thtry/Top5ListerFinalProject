@@ -6,6 +6,7 @@ import MoveItem_Transaction from '../transactions/MoveItem_Transaction'
 import UpdateItem_Transaction from '../transactions/UpdateItem_Transaction'
 import AuthContext from '../auth'
 import AlertDialog from "../components/AlertDialog";
+import { stringify } from 'querystring'
 
 /*
     This is our global data store. Note that it uses the Flux design pattern,
@@ -165,7 +166,7 @@ function GlobalStoreContextProvider(props) {
     store.reformatAllTop5Lists = async function (){
         let result=[]
         let temp
-        try{
+        try{ //GET name, items, 
             let response =await api.getAllTop5Lists()
             let allTop5Lists= response.data.data
             for(let i =0; i< allTop5Lists.length;i++){
@@ -175,6 +176,7 @@ function GlobalStoreContextProvider(props) {
                 }
                 result.push(temp)
             }
+            console.log(result)
             return result
         }
         catch{
@@ -194,8 +196,14 @@ function GlobalStoreContextProvider(props) {
                 for(let i=0;i<lists.length;i++){
                     let top5List={
                         name:auth.user.items[i][1],
-                        items:auth.user.items[i].slice(2)
+                        items:auth.user.items[i].slice(2),
+                        likes:[[],[]],
+                        author:top5ListsResponse.data.data.author,
+                        publishedDate:"unpublished",
+                        views:0,
+                        comments:[],
                     }
+                    console.log("11")
                     await api.createTop5List(top5List)
                 }
             }    
@@ -204,7 +212,12 @@ function GlobalStoreContextProvider(props) {
             for(let i=0;i<lists.length;i++){
                 let top5List={
                     name:auth.user.items[i][1],
-                    items:auth.user.items[i].slice(2)
+                    items:auth.user.items[i].slice(2),
+                    likes:[[],[]],
+                    author:"Unknown",
+                    publishedDate:"unpublished",
+                    views:0,
+                    comments:[],
                 }
                 await api.createTop5List(top5List)
             }
@@ -243,7 +256,6 @@ function GlobalStoreContextProvider(props) {
             await updateList(top5List);
         }
         let item=await store.reformatAllTop5Lists()
-        console.log(item)
         let newUserData= await api.updateUser(auth.user.email, item)
         auth.user=newUserData.data.user    
     }
@@ -266,6 +278,11 @@ function GlobalStoreContextProvider(props) {
         let payload = {
             name: newListName,
             items: ["?", "?", "?", "?", "?"],
+            likes:[[],[]],
+            author:auth.user.firstName,
+            publishedDate:"unpublished",
+            views:0,
+            comments:[],
             ownerEmail: auth.user.email
         };
         const response = await api.createTop5List(payload);

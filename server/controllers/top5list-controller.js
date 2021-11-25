@@ -16,7 +16,7 @@ createTop5List = (req, res) => {
     }
 
     top5List
-        .save()
+        .save() //something went wrong here
         .then(() => {
             return res.status(201).json({
                 success: true,
@@ -25,6 +25,7 @@ createTop5List = (req, res) => {
             })
         })
         .catch(error => {
+            console.log("Top 5 list not created")
             return res.status(400).json({
                 error,
                 message: 'Top 5 List Not Created!'

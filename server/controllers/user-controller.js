@@ -21,6 +21,7 @@ updateUser = async (req, res) => {
                 message: 'user not found!',
             })
         }
+        console.log(body)
         user.items = body
         user
             .save()

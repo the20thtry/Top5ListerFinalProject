@@ -73,18 +73,22 @@ function ListCard(props) {
             }
             }
             style={{
-                fontSize: '48pt',
+                fontSize: '24pt',
                 width: '100%'
             }}
         >
-                <Box sx={{ p: 1, flexGrow: 1 }}>{idNamePair.name}</Box>
+                <Box sx={{ p: 1, flexGrow: 1}}>
+                    {idNamePair.name} 
+                    <br />
+                    By: 
+                </Box>
                 <Box sx={{ p: 1 }}>
                     <IconButton onClick={handleToggleEdit} aria-label='edit'>
                         <EditIcon style={{fontSize:'48pt'}} />
                     </IconButton>
                 </Box>
                 <Box sx={{ p: 1 }}>
-                    <ResponsiveDialog>  </ResponsiveDialog>
+                    <ResponsiveDialog>  </ResponsiveDialog> 
                 </Box>
         </ListItem>
 

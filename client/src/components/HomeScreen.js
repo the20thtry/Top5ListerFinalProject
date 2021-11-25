@@ -39,8 +39,6 @@ const HomeScreen = () => {
 
     useEffect(() => {
         store.loadIdNamePairs();
-        console.log(store.idNamePairs)
-        console.log(auth.user.items)
     }, []);
 
     function handleCreateNewList() {
