@@ -52,11 +52,9 @@ export default function AppBanner() {
             <MenuItem onClick={handleMenuClose}><Link to='/register/'>Create New Account</Link></MenuItem>
             <MenuItem onClick={handleMenuClose}><Link to='/login/'>Log in</Link></MenuItem>
         </Menu>
-        
     );
     const loggedInMenu = 
         <Menu
-            
             anchorEl={anchorEl}
             anchorOrigin={{
                 vertical: 'top',
@@ -79,13 +77,7 @@ export default function AppBanner() {
     if (auth.loggedIn) {
         menu = loggedInMenu;
         if (store.currentList) {
-            let x=document.getElementsByClassName("MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-padding MuiListItem-button css-umtevz-MuiButtonBase-root-MuiListItem-root")
-            console.log(x.length)
-            if(x.length==0){
                 editToolbar = <EditToolbar />;
-
-            }
-
         }
     }
     
