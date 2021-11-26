@@ -166,7 +166,7 @@ function GlobalStoreContextProvider(props) {
     store.reformatAllTop5Lists = async function (){
         let items=[]
         let result=[]
-        let temp
+        let temp,temp1,temp2,temp3,temp4,temp5
         try{ //GET name, items, 
             let response =await api.getAllTop5Lists()
             let allTop5Lists= response.data.data
@@ -177,14 +177,19 @@ function GlobalStoreContextProvider(props) {
                     temp.push(allTop5Lists[i].items[j])
                 }
                 items.push(temp)
-                result["1"]=allTop5Lists[i].likes
-                result["2"]=allTop5Lists[i].author
-                result["3"]=allTop5Lists[i].publishedDate
-                result["4"]=allTop5Lists[i].views
-                result["5"]=allTop5Lists[i].comments
+                temp1.push(allTop5Lists[i].likes)
+                temp2.push(allTop5Lists[i].author)
+                temp3.push(allTop5Lists[i].publishedDate)
+                temp4.push(allTop5Lists[i].views)
+                temp5.push(allTop5Lists[i].comments)
             }
             
             result["0"]=items
+            result["1"]=temp1
+            result["2"]=temp2
+            result["3"]=temp3
+            result["4"]=temp4
+            result["5"]=temp5
             console.log(result)
             return result
         }

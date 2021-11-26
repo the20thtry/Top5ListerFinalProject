@@ -20,7 +20,7 @@ export default function ResponsiveDialog() {
 
 
     const handleClickOpen = (event) => {
-    let listName = event.target.parentElement.parentElement.parentElement.getElementsByClassName("MuiBox-root css-3rviqk")[0].innerHTML
+    let listName =event.target.parentElement.parentElement.parentElement.getElementsByClassName("MuiBox-root css-3rviqk")[0].innerHTML
     listName=listName.split("<br>By:")[0]
     
     event.stopPropagation();
