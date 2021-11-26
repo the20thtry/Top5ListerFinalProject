@@ -1,12 +1,22 @@
 const auth = require('../auth')
 const User = require('../models/user-model')
 const bcrypt = require('bcryptjs')
+const { stringify } = require('querystring')
 
 //copy pasted updateTop5List and changed some variables
 updateUser = async (req, res) => {
-    const body = req.body
+    const body = req.body["0"]
+    const likes=(req.body["1"])
+    const author= (req.body['2'])
+    const publishingDate = (req.body['3'])
+    const views = (req.body['4'])
+    const comments = (req.body['5'])
+
+    //var keys = Object.keys(req);
+    //console.log("req is: " + body +"\n keys: " + keys)
     console.log("User to be updated: " + JSON.stringify(body));
     if (!body) {
+        console.log("body not found")
         return res.status(400).json({
             success: false,
             error: 'You must provide a body to update',
@@ -23,6 +33,12 @@ updateUser = async (req, res) => {
         }
         console.log(body)
         user.items = body
+        user.likes=likes
+        user.author =author
+        user.publishingDate =publishingDate
+        user.views =views
+        user.comments =comments
+
         user
             .save()
             .then(() => {
@@ -55,7 +71,12 @@ getLoggedIn = async (req, res) => {
                 lastName: loggedInUser.lastName,
                 email: loggedInUser.email,
                 items: loggedInUser.items,
-                _id: loggedInUser._id
+                _id: loggedInUser._id,
+                likes:loggedInUser.likes, 
+                author:loggedInUser.author,
+                publishedDate:loggedInUser.publishingDate,
+                views:loggedInUser.views,
+                comments:loggedInUser.comments
             }
         })//.send() //I got rid of it and it got rid of some bugs but idk if this is smart
     })
@@ -100,7 +121,13 @@ login = async (req, res) => {
                             firstName: existingUser.firstName,
                             lastName: existingUser.lastName,
                             email: existingUser.email,
-                            items: existingUser.items
+                            items: existingUser.items,
+                            _id: existingUser._id,
+                            likes:existingUser.likes, 
+                            author:existingUser.author,
+                            publishedDate:existingUser.publishingDate,
+                            views:existingUser.views,
+                            comments:existingUser.comments
                         }
                     }).send();
                 }
@@ -159,8 +186,13 @@ registerUser = async (req, res) => {
         const salt = await bcrypt.genSalt(saltRounds);
         const passwordHash = await bcrypt.hash(password, salt);
 
+        let likes=[[""],[""]]
+        let author= [firstName + " "+ lastName]
+        let publishedDate=["unpublished"]
+        let views=[0]
+        let comments=[[""]]
         const newUser = new User({
-            firstName, lastName, email, passwordHash,items
+            firstName, lastName, email, passwordHash,items, likes, author, publishedDate,views,comments
         });
         const savedUser = await newUser.save();
         

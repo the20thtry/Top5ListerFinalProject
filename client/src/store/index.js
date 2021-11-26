@@ -164,31 +164,40 @@ function GlobalStoreContextProvider(props) {
     //takes the temporary list and returns a reformatted [[]] that we can use as item for updating the user
     //gets all top5listnamepairs and the items which come with them
     store.reformatAllTop5Lists = async function (){
+        let items=[]
         let result=[]
         let temp
         try{ //GET name, items, 
             let response =await api.getAllTop5Lists()
             let allTop5Lists= response.data.data
+            console.log(allTop5Lists)
             for(let i =0; i< allTop5Lists.length;i++){
                 temp=(["Placeholder", allTop5Lists[i].name])
                 for(let j =0; j< 5;j++){
                     temp.push(allTop5Lists[i].items[j])
                 }
-                result.push(temp)
+                items.push(temp)
+                result["1"]=allTop5Lists[i].likes
+                result["2"]=allTop5Lists[i].author
+                result["3"]=allTop5Lists[i].publishingDate
+                result["4"]=allTop5Lists[i].views
+                result["5"]=allTop5Lists[i].comments
             }
+            
+            result["0"]=items
             console.log(result)
             return result
         }
         catch{
+            console.log("reformat went wrong")
             return []
         }
-
     }
 
     store.updateTempTop5Lists = async function () {
         let lists= auth.user.items
         try{
-            let top5ListsResponse= await api.getAllTop5Lists()
+            let top5ListsResponse= await api.getAllTop5Lists() 
             if(top5ListsResponse){
                 for(let i=0;i<top5ListsResponse.data.data.length;i++){
                     await api.deleteTop5ListById(top5ListsResponse.data.data[i]._id)
@@ -197,28 +206,30 @@ function GlobalStoreContextProvider(props) {
                     let top5List={
                         name:auth.user.items[i][1],
                         items:auth.user.items[i].slice(2),
-                        likes:[[],[]],
-                        author:top5ListsResponse.data.data.author,
-                        publishedDate:"unpublished",
-                        views:0,
-                        comments:[],
+                        likes:auth.user.likes[i],
+                        author:auth.user.author[i],
+                        publishedDate:auth.user.publishedDate[i],
+                        views:auth.user.views[i],
+                        comments:auth.user.comments[i],
                     }
-                    console.log("11")
                     await api.createTop5List(top5List)
                 }
             }    
         }
         catch{ //if getalltop5list results in error, that means the lists are empty
             for(let i=0;i<lists.length;i++){
+                console.log("123" +  auth.user.items[0])
+                console.log("2")
                 let top5List={
                     name:auth.user.items[i][1],
                     items:auth.user.items[i].slice(2),
-                    likes:[[],[]],
-                    author:"Unknown",
-                    publishedDate:"unpublished",
-                    views:0,
-                    comments:[],
+                    //likes:auth.user.likes[i],
+                    //author:auth.user.author[i],
+                    //publishedDate:auth.user.publishedDate[i],
+                    //views:auth.user.views[i],
+                    //comments:auth.user.comments[i],
                 }
+                
                 await api.createTop5List(top5List)
             }
         }
@@ -255,8 +266,8 @@ function GlobalStoreContextProvider(props) {
             }
             await updateList(top5List);
         }
-        let item=await store.reformatAllTop5Lists()
-        let newUserData= await api.updateUser(auth.user.email, item)
+        let result=await store.reformatAllTop5Lists()
+        let newUserData= await api.updateUser(auth.user.email, result)
         auth.user=newUserData.data.user    
     }
 
@@ -278,11 +289,11 @@ function GlobalStoreContextProvider(props) {
         let payload = {
             name: newListName,
             items: ["?", "?", "?", "?", "?"],
-            likes:[[],[]],
-            author:auth.user.firstName,
+            likes:[[""],[""]],
+            author:auth.user.firstName + " " +auth.user.lastName,
             publishedDate:"unpublished",
             views:0,
-            comments:[],
+            comments:[""],
             ownerEmail: auth.user.email
         };
         const response = await api.createTop5List(payload);
@@ -296,7 +307,15 @@ function GlobalStoreContextProvider(props) {
             );
             let item=auth.user.items
             item.push(["newList","Untitled" +this.newListCounter,1,2,3,4,5])
-            let newUserData= await api.updateUser(auth.user.email, item)
+            let updatedInfo =[]
+            updatedInfo["0"]=item
+            updatedInfo["1"]=auth.user.likes
+            updatedInfo["2"]=auth.user.author
+            updatedInfo["3"]=auth.user.publishedDate.push("unpublished")
+            updatedInfo["4"]=auth.user.views.push(1)
+            updatedInfo["5"]=auth.user.comments
+
+            let newUserData= await api.updateUser(auth.user.email, updatedInfo)
             auth.user=newUserData.data.user
             // IF IT'S A VALID LIST THEN LET'S START EDITING IT
             history.push("/top5list/" + newList._id);
@@ -311,6 +330,7 @@ function GlobalStoreContextProvider(props) {
         if(auth.user){
             try{
                 await store.updateTempTop5Lists()
+
                 const response = await api.getTop5ListPairs();
                 if (response.data.success) {
                     let pairsArray = response.data.idNamePairs;
@@ -321,7 +341,7 @@ function GlobalStoreContextProvider(props) {
                 }
             }
             catch{
-                console.log("error")
+                console.log("error, loadidnamepair failed")
             }
         }
         else {
