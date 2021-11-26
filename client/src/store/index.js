@@ -179,7 +179,7 @@ function GlobalStoreContextProvider(props) {
                 items.push(temp)
                 result["1"]=allTop5Lists[i].likes
                 result["2"]=allTop5Lists[i].author
-                result["3"]=allTop5Lists[i].publishingDate
+                result["3"]=allTop5Lists[i].publishedDate
                 result["4"]=allTop5Lists[i].views
                 result["5"]=allTop5Lists[i].comments
             }
@@ -218,18 +218,15 @@ function GlobalStoreContextProvider(props) {
         }
         catch{ //if getalltop5list results in error, that means the lists are empty
             for(let i=0;i<lists.length;i++){
-                console.log("123" +  auth.user.items[0])
-                console.log("2")
                 let top5List={
                     name:auth.user.items[i][1],
                     items:auth.user.items[i].slice(2),
-                    //likes:auth.user.likes[i],
-                    //author:auth.user.author[i],
-                    //publishedDate:auth.user.publishedDate[i],
-                    //views:auth.user.views[i],
-                    //comments:auth.user.comments[i],
+                    likes:auth.user.likes[i],
+                    author:auth.user.author[i],
+                    publishedDate:auth.user.publishedDate[i], 
+                    views:auth.user.views[i],
+                    comments:auth.user.comments[i],
                 }
-                
                 await api.createTop5List(top5List)
             }
         }
@@ -286,14 +283,19 @@ function GlobalStoreContextProvider(props) {
     // THIS FUNCTION CREATES A NEW LIST
     store.createNewList = async function () {
         let newListName = "Untitled" + store.newListCounter;
+        let defaultLikes=[[],[]]
+        let defaultAuthor=auth.user.firstName + " " +auth.user.lastName
+        let defaultpublishedDate="unpublished"
+        let defaultViews=0
+        let defaultComment=[]
         let payload = {
             name: newListName,
             items: ["?", "?", "?", "?", "?"],
-            likes:[[""],[""]],
-            author:auth.user.firstName + " " +auth.user.lastName,
-            publishedDate:"unpublished",
-            views:0,
-            comments:[""],
+            likes:defaultLikes,
+            author:defaultAuthor,
+            publishedDate:defaultpublishedDate,
+            views:defaultViews,
+            comments:defaultComment,
             ownerEmail: auth.user.email
         };
         const response = await api.createTop5List(payload);
@@ -309,11 +311,21 @@ function GlobalStoreContextProvider(props) {
             item.push(["newList","Untitled" +this.newListCounter,1,2,3,4,5])
             let updatedInfo =[]
             updatedInfo["0"]=item
-            updatedInfo["1"]=auth.user.likes
-            updatedInfo["2"]=auth.user.author
-            updatedInfo["3"]=auth.user.publishedDate.push("unpublished")
-            updatedInfo["4"]=auth.user.views.push(1)
-            updatedInfo["5"]=auth.user.comments
+            let temp= auth.user.likes
+            temp.push(defaultLikes)
+            updatedInfo["1"]=temp
+            temp=auth.user.author
+            temp.push(defaultAuthor)
+            updatedInfo["2"]=temp
+            temp= auth.user.publishedDate
+            temp.push(defaultpublishedDate)
+            updatedInfo["3"]=temp
+            temp= auth.user.views
+            temp.push(defaultViews)
+            updatedInfo["4"]=temp
+            temp= auth.user.comments
+            temp.push(defaultComment)
+            updatedInfo["5"]=temp
 
             let newUserData= await api.updateUser(auth.user.email, updatedInfo)
             auth.user=newUserData.data.user
@@ -330,7 +342,6 @@ function GlobalStoreContextProvider(props) {
         if(auth.user){
             try{
                 await store.updateTempTop5Lists()
-
                 const response = await api.getTop5ListPairs();
                 if (response.data.success) {
                     let pairsArray = response.data.idNamePairs;

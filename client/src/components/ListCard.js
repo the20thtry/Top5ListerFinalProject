@@ -66,30 +66,34 @@ function ListCard(props) {
         <ListItem
             id={idNamePair._id}
             key={idNamePair._id}
-            sx={{ marginTop: '15px', display: 'flex', p: 1 }}
+            sx={{ marginTop: '15px', display: 'flex', p: 1 ,backgroundColor: 'powderblue',borderRadius: 5, border:1}}
             button
             onClick={(event) => {
                 handleLoadList(event, idNamePair._id)
             }
             }
             style={{
-                fontSize: '24pt',
+                fontSize: '16pt',
                 width: '100%'
             }}
-        >
-                <Box sx={{ p: 1, flexGrow: 1}}>
+        >   <div>
+                <Box sx={{ p: 1, flexGrow: 1, mt: 1,  }}>
                     {idNamePair.name} 
                     <br />
-                    By: 
+                    By: authorName
+                    <br/>
+                    edit/publish placeholder
                 </Box>
                 <Box sx={{ p: 1 }}>
                     <IconButton onClick={handleToggleEdit} aria-label='edit'>
-                        <EditIcon style={{fontSize:'48pt'}} />
+                        <EditIcon style={{fontSize:'16pt'}} />
                     </IconButton>
                 </Box>
                 <Box sx={{ p: 1 }}>
                     <ResponsiveDialog>  </ResponsiveDialog> 
                 </Box>
+        </div>
+
         </ListItem>
 
     if (editActive) {

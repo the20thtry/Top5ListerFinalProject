@@ -9,6 +9,11 @@ const UserSchema = new Schema(
         email: { type: String, required: true },
         passwordHash: { type: String, required: true },
         items: { type: [[String]], required: true },
+        likes: {type: [[[String],[String]]],required: true},//[People who liked, People who disliked]
+        author:{type:[String], required:true},//name list creator
+        publishedDate:{type:[String],required:true},//date in string format(Jan 5, 2019)), if unpublushed=("unpublished")
+        views:{type: [Number],required:true}, //how many views the list has
+        comments:{type:[[String]],required:true} //all comments saved as strings 
     },
     { timestamps: true },
 )

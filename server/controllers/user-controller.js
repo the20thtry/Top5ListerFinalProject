@@ -8,7 +8,7 @@ updateUser = async (req, res) => {
     const body = req.body["0"]
     const likes=(req.body["1"])
     const author= (req.body['2'])
-    const publishingDate = (req.body['3'])
+    const publishedDate = (req.body['3'])
     const views = (req.body['4'])
     const comments = (req.body['5'])
 
@@ -35,7 +35,7 @@ updateUser = async (req, res) => {
         user.items = body
         user.likes=likes
         user.author =author
-        user.publishingDate =publishingDate
+        user.publishedDate =publishedDate
         user.views =views
         user.comments =comments
 
@@ -74,7 +74,7 @@ getLoggedIn = async (req, res) => {
                 _id: loggedInUser._id,
                 likes:loggedInUser.likes, 
                 author:loggedInUser.author,
-                publishedDate:loggedInUser.publishingDate,
+                publishedDate:loggedInUser.publishedDate,
                 views:loggedInUser.views,
                 comments:loggedInUser.comments
             }
@@ -125,7 +125,7 @@ login = async (req, res) => {
                             _id: existingUser._id,
                             likes:existingUser.likes, 
                             author:existingUser.author,
-                            publishedDate:existingUser.publishingDate,
+                            publishedDate:existingUser.publishedDate,
                             views:existingUser.views,
                             comments:existingUser.comments
                         }
@@ -186,7 +186,7 @@ registerUser = async (req, res) => {
         const salt = await bcrypt.genSalt(saltRounds);
         const passwordHash = await bcrypt.hash(password, salt);
 
-        let likes=[[""],[""]]
+        let likes=[[[],[]]]
         let author= [firstName + " "+ lastName]
         let publishedDate=["unpublished"]
         let views=[0]
@@ -210,7 +210,12 @@ registerUser = async (req, res) => {
                 firstName: savedUser.firstName,
                 lastName: savedUser.lastName,
                 email: savedUser.email,
-                items: savedUser.items
+                items: savedUser.items,
+                likes:savedUser.likes, 
+                author:savedUser.author,
+                publishedDate:savedUser.publishedDate,
+                views:savedUser.views,
+                comments:savedUser.comments
             }
         }).send();
 
