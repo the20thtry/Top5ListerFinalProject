@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import { SSL_OP_COOKIE_EXCHANGE } from 'constants';
+import CircleOutlinedIcon from '@mui/icons-material/CircleOutlined';
 
 export default function AppBanner() {
     const { auth } = useContext(AuthContext);
@@ -82,7 +82,6 @@ export default function AppBanner() {
     }
     
     function getAccountMenu(loggedIn) {
-        console.log()
         if (!loggedIn){
             return <AccountCircle> </AccountCircle>;
         }
@@ -92,7 +91,6 @@ export default function AppBanner() {
             return x+y
         }
     }
-
     return (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static">
@@ -106,7 +104,7 @@ export default function AppBanner() {
                         <Link style={{ textDecoration: 'none', color: 'white' }} to='/'>T<sup>5</sup>L</Link>
                     </Typography>
                     <Box sx={{ flexGrow: 1 }}>{editToolbar}</Box>
-                    <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+                    <Box sx={{ display: {  md: 'flex' } }}>
                         <IconButton
                             size="large"
                             edge="end"
@@ -115,6 +113,7 @@ export default function AppBanner() {
                             aria-haspopup="true"
                             onClick={handleProfileMenuOpen}
                             color="inherit"
+                            style={{backgroundColor:"magenta"}}
                         >
                             { getAccountMenu(auth.loggedIn) }
                         </IconButton>

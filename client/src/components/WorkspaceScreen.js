@@ -14,8 +14,30 @@ import { Button } from '@mui/material';
 */
 function WorkspaceScreen() {
     const { store } = useContext(GlobalStoreContext);
+    let listName="untitled"
+    if (store.currentList){
+        listName=store.currentList.name
+    }
 
-    let listName=store.currentList.name
+    async function saveList(ev){
+        ev.stopPropagation()
+        let currentList=store.currentList
+        try{
+            await store.changeListName(currentList._id, listName)
+            await store.saveTempListToUser()
+            console.log("we did it")
+            store.closeCurrentList()
+        }
+        catch{
+            store.closeCurrentList()
+        }
+
+    }
+
+    function updateListName(ev){
+        listName= (ev.target.value)
+    }
+
     function FullWidthTextField() {
         return (
           <Box
@@ -26,7 +48,7 @@ function WorkspaceScreen() {
               backgroundColor:"white"
             }}
           >
-            <TextField fullWidth label={listName} id="fullWidth" defaultValue={listName} />
+            <TextField fullWidth label={listName} id="fullWidth" defaultValue={listName} onChange={updateListName} />
           </Box>
         );
       }
@@ -59,7 +81,7 @@ function WorkspaceScreen() {
                 {editItems}
             </div>
             <div className="save-publish-div">
-                <Button class='save-button'>save</Button>
+                <Button class='save-button' onClick={saveList}>save</Button>
 
                 <Button class='publish-button'>Publish </Button>
 

@@ -7,8 +7,9 @@ import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ResponsiveDialog from "./deleteModal";
-
-
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 /*
     This is a card in our list of top 5 lists. It lets select
     a list for editing and it has controls for changing its 
@@ -58,8 +59,25 @@ function ListCard(props) {
         setText(event.target.value);
     }
 
-    if(store.currentList){
-        
+    let deleteButton=<div></div>
+    if (true){
+        deleteButton= 
+        <Box sx={{ p: 1 ,float:"right", marginRight:"5%", marginBottom:"60%"}}>
+        <ResponsiveDialog>  </ResponsiveDialog> 
+        </Box>
+    }
+
+    let editPublishButton= 
+        <Box sx={{ p: 1 }}>
+        <IconButton            onClick={(event) => {
+                handleLoadList(event, idNamePair._id)
+            }} aria-label='edit'>
+            <EditIcon style={{fontSize:'16pt'}} />
+        </IconButton>
+        </Box>
+    
+    if (idNamePair.publishedDate != "unpublished"){
+        editPublishButton= "published: " + idNamePair.publishedDate
     }
 
     let cardElement =
@@ -68,31 +86,47 @@ function ListCard(props) {
             key={idNamePair._id}
             sx={{ marginTop: '15px', display: 'flex', p: 1 ,backgroundColor: 'powderblue',borderRadius: 5, border:1}}
             button
-            onClick={(event) => {
-                handleLoadList(event, idNamePair._id)
-            }
-            }
             style={{
                 fontSize: '16pt',
                 width: '100%'
             }}
         >   <div>
-                <Box sx={{ p: 1, flexGrow: 1, mt: 1,  }}>
+                <Box sx={{ p: 1, flexGrow: 1, mt: 1, fontSize:16 }}>
                     {idNamePair.name} 
                     <br />
-                    By: authorName
+                    By: {idNamePair.author}
                     <br/>
-                    edit/publish placeholder
+                    {editPublishButton}
                 </Box>
-                <Box sx={{ p: 1 }}>
-                    <IconButton onClick={handleToggleEdit} aria-label='edit'>
-                        <EditIcon style={{fontSize:'16pt'}} />
-                    </IconButton>
-                </Box>
-                <Box sx={{ p: 1 }}>
-                    <ResponsiveDialog>  </ResponsiveDialog> 
-                </Box>
+
         </div>
+        <div style={{height:"50%", width:"100%"}}>
+            {deleteButton}
+
+            <div style={{float:"right", marginRight:"5%", marginBottom:"50%"}}>
+            {idNamePair.likes[1].length}
+            </div>
+            <ThumbDownIcon 
+            style={{float:"right", marginRight:"5%", marginBottom:"50%"}}
+            >            
+            </ThumbDownIcon>
+            <div style={{float:"right", marginRight:"5%", marginBottom:"50%"}}>
+            {idNamePair.likes[0].length}
+            </div>
+            <ThumbUpIcon 
+            style={{float:"right", marginRight:"5%", marginBottom:"50%"}}
+            >            
+            </ThumbUpIcon>
+            <div style={{float:"right", marginRight:"-20%", marginTop:"60%", fontSize:16}}>
+            Views: {idNamePair.views}
+            </div>
+            <KeyboardArrowDownIcon 
+            style={{float:"right", marginRight:"-35%", marginTop:"60%"}}
+            >            
+            </KeyboardArrowDownIcon>
+            </div>
+
+
 
         </ListItem>
 

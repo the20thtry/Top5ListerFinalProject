@@ -14,7 +14,7 @@ import { GlobalStoreContext } from '../store'
 
 
 export default function ResponsiveDialog() {
-  const [open, setOpen] = React.useState(null);
+  const [open, setOpen] = React.useState("");
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const { store } = useContext(GlobalStoreContext);
@@ -22,11 +22,14 @@ export default function ResponsiveDialog() {
 
     const handleClickOpen = (event) => {
     event.stopPropagation();
-
-    let listName =event.target.parentElement.parentElement.parentElement.getElementsByClassName("MuiBox-root css-3rviqk")[0].innerHTML
+    let theListItself=event.target.parentElement.parentElement.parentElement.parentElement.parentElement
+    let listName =theListItself.getElementsByClassName("MuiBox-root css-15bszol")[0].innerHTML
+  
     listName=listName.split("<br>By:")[0]
     
-    store.markListForDeletion(event.target.parentElement.parentElement.parentElement.id)
+    console.log(listName)
+    console.log(theListItself.id)
+    store.markListForDeletion(theListItself.id)
     setOpen(listName);
   };
 
@@ -48,7 +51,7 @@ export default function ResponsiveDialog() {
         delete list
       </DeleteSharpIcon>
       <Dialog
-        fullScreen={fullScreen}
+        fullScreen={false}
         open={open}
         onClose={handleClose}
         aria-labelledby="responsive-dialog-title"

@@ -5,8 +5,7 @@ import api from '../api'
 import MoveItem_Transaction from '../transactions/MoveItem_Transaction'
 import UpdateItem_Transaction from '../transactions/UpdateItem_Transaction'
 import AuthContext from '../auth'
-import AlertDialog from "../components/AlertDialog";
-import { stringify } from 'querystring'
+
 
 /*
     This is our global data store. Note that it uses the Flux design pattern,
@@ -166,7 +165,8 @@ function GlobalStoreContextProvider(props) {
     store.reformatAllTop5Lists = async function (){
         let items=[]
         let result=[]
-        let temp,temp1,temp2,temp3,temp4,temp5
+        let temp,temp1,temp2,temp3,temp4,temp5;
+        temp1=[];temp2=[];temp3=[];temp4=[];temp5=[]
         try{ //GET name, items, 
             let response =await api.getAllTop5Lists()
             let allTop5Lists= response.data.data
@@ -177,20 +177,20 @@ function GlobalStoreContextProvider(props) {
                     temp.push(allTop5Lists[i].items[j])
                 }
                 items.push(temp)
+                //here is where bug occurred for savelist button
+                console.log(temp1)
                 temp1.push(allTop5Lists[i].likes)
                 temp2.push(allTop5Lists[i].author)
                 temp3.push(allTop5Lists[i].publishedDate)
                 temp4.push(allTop5Lists[i].views)
                 temp5.push(allTop5Lists[i].comments)
             }
-            
             result["0"]=items
             result["1"]=temp1
             result["2"]=temp2
             result["3"]=temp3
             result["4"]=temp4
             result["5"]=temp5
-            console.log(result)
             return result
         }
         catch{
@@ -201,13 +201,15 @@ function GlobalStoreContextProvider(props) {
 
     store.updateTempTop5Lists = async function () {
         let lists= auth.user.items
+        console.log(lists)
         try{
-            let top5ListsResponse= await api.getAllTop5Lists() 
+            let top5ListsResponse= await api.getAllTop5Lists()
             if(top5ListsResponse){
                 for(let i=0;i<top5ListsResponse.data.data.length;i++){
                     await api.deleteTop5ListById(top5ListsResponse.data.data[i]._id)
                 }
-                for(let i=0;i<lists.length;i++){
+                for(let i=0;i<auth.user.items.length;i++){
+
                     let top5List={
                         name:auth.user.items[i][1],
                         items:auth.user.items[i].slice(2),
@@ -217,12 +219,13 @@ function GlobalStoreContextProvider(props) {
                         views:auth.user.views[i],
                         comments:auth.user.comments[i],
                     }
+                    console.log(auth.user)
                     await api.createTop5List(top5List)
                 }
             }    
         }
         catch{ //if getalltop5list results in error, that means the lists are empty
-            for(let i=0;i<lists.length;i++){
+            for(let i=0;i<auth.user.items.length;i++){
                 let top5List={
                     name:auth.user.items[i][1],
                     items:auth.user.items[i].slice(2),
@@ -247,8 +250,10 @@ function GlobalStoreContextProvider(props) {
         if (response.data.success) {
             let top5List = response.data.top5List;
             top5List.name = newName;
+            console.log(top5List)
             async function updateList(top5List) {
-                response = await api.updateTop5ListById(top5List._id, top5List);
+                console.log("the id of list name to be changed is : " +top5List._id)
+                response = await api.updateTop5ListById(top5List._id, top5List);//this line doesnt work somehow?
                 if (response.data.success) {
                     async function getListPairs(top5List) {
                         response = await api.getTop5ListPairs();
@@ -268,7 +273,11 @@ function GlobalStoreContextProvider(props) {
             }
             await updateList(top5List);
         }
-        let result=await store.reformatAllTop5Lists()
+        store.saveTempListToUser()
+    }
+
+    store.saveTempListToUser = async function () {
+        let result= await store.reformatAllTop5Lists()
         let newUserData= await api.updateUser(auth.user.email, result)
         auth.user=newUserData.data.user    
     }
@@ -365,6 +374,7 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+
     // THE FOLLOWING 5 FUNCTIONS ARE FOR COORDINATING THE DELETION
     // OF A LIST, WHICH INCLUDES USING A VERIFICATION MODAL. THE
     // FUNCTIONS ARE markListForDeletion, deleteList, deleteMarkedList,
@@ -384,12 +394,7 @@ function GlobalStoreContextProvider(props) {
     store.deleteList = async function (listToDelete) {
         let response = await api.deleteTop5ListById(listToDelete._id);
         if (response.data.success) {
-            console.log("0")
-            let item= await store.reformatAllTop5Lists()
-            console.log("1")
-            let newUserData= await api.updateUser(auth.user.email, item)
-            console.log("2")
-            auth.user=newUserData.data.user
+            store.saveTempListToUser()
             await store.updateTempTop5Lists()
             store.loadIdNamePairs()
         }
@@ -464,17 +469,14 @@ function GlobalStoreContextProvider(props) {
 
         // NOW MAKE IT OFFICIAL
         await store.updateCurrentList();
-        let item= await store.reformatAllTop5Lists()
-        let newUserData= await api.updateUser(auth.user.email, item)
-        auth.user=newUserData.data.user    }
+        store.saveTempListToUser()
+}
 
     store.updateItem = async function (index, newItem) {
         store.currentList.items[index] = newItem;
         await store.updateCurrentList();
-        let item= await store.reformatAllTop5Lists()
-        console.log(item)
-        let newUserData= await api.updateUser(auth.user.email, item)
-        auth.user=newUserData.data.user
+        store.saveTempListToUser()
+
     }
 
     store.updateCurrentList = async function () {
