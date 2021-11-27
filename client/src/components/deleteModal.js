@@ -8,6 +8,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import { useContext, useState } from 'react'
+import DeleteSharpIcon from '@mui/icons-material/DeleteSharp';
 
 import { GlobalStoreContext } from '../store'
 
@@ -20,10 +21,11 @@ export default function ResponsiveDialog() {
 
 
     const handleClickOpen = (event) => {
+    event.stopPropagation();
+
     let listName =event.target.parentElement.parentElement.parentElement.getElementsByClassName("MuiBox-root css-3rviqk")[0].innerHTML
     listName=listName.split("<br>By:")[0]
     
-    event.stopPropagation();
     store.markListForDeletion(event.target.parentElement.parentElement.parentElement.id)
     setOpen(listName);
   };
@@ -42,9 +44,9 @@ export default function ResponsiveDialog() {
 
   return (
     <div>
-      <Button variant="outlined" onClick={handleClickOpen}>
+      <DeleteSharpIcon variant="outlined" onClick={handleClickOpen} style={{fontSize:36}}>
         delete list
-      </Button>
+      </DeleteSharpIcon>
       <Dialog
         fullScreen={fullScreen}
         open={open}
