@@ -25,7 +25,6 @@ function WorkspaceScreen() {
         try{
             await store.changeListName(currentList._id, listName)
             await store.saveTempListToUser()
-            console.log("we did it")
             store.closeCurrentList()
         }
         catch{

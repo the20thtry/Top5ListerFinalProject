@@ -16,7 +16,6 @@ router.get('/loggedIn', UserController.getLoggedIn)
 router.post('/login', UserController.login)
 router.get(`/logout/`, UserController.getLoggedOut)
 router.put('/user/:id', auth.verify, UserController.updateUser)
-
-
+router.get('/user', UserController.getAllUserTop5Lists)
 
 module.exports = router

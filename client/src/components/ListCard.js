@@ -59,6 +59,18 @@ function ListCard(props) {
         setText(event.target.value);
     }
 
+    async function dislike(event){
+        event.stopPropagation()
+        //copy pasted from deleteModal
+        let theListItself=event.target.parentElement.parentElement.parentElement.parentElement
+        let listName =theListItself.getElementsByClassName("MuiBox-root css-1mm12im")[0].innerHTML
+        listName=listName.split("<br>By:")[0]
+        let id=listName.id
+        //we have the id, just need to get user info and update it now
+        let response= await store.getAllUserTop5Lists()
+        console.log(response)
+    }
+
     let deleteButton=<div></div>
     if (true){
         deleteButton= 
@@ -88,10 +100,11 @@ function ListCard(props) {
             button
             style={{
                 fontSize: '16pt',
-                width: '100%'
+                width: '100%',
+                height:'px'
             }}
         >   <div>
-                <Box sx={{ p: 1, flexGrow: 1, mt: 1, fontSize:16 }}>
+                <Box sx={{ p: 1, flexGrow: 0, mt: 1, fontSize:16 }}>
                     {idNamePair.name} 
                     <br />
                     By: {idNamePair.author}
@@ -100,33 +113,33 @@ function ListCard(props) {
                 </Box>
 
         </div>
-        <div style={{height:"50%", width:"100%"}}>
+        <div style={{height:"40%", width:"100%", position:"absolute", top:"0px"}}>
             {deleteButton}
 
-            <div style={{float:"right", marginRight:"5%", marginBottom:"50%"}}>
+            <div style={{float:"right", marginRight:"5%", }}>
             {idNamePair.likes[1].length}
             </div>
-            <ThumbDownIcon 
-            style={{float:"right", marginRight:"5%", marginBottom:"50%"}}
-            >            
-            </ThumbDownIcon>
-            <div style={{float:"right", marginRight:"5%", marginBottom:"50%"}}>
-            {idNamePair.likes[0].length}
-            </div>
-            <ThumbUpIcon 
-            style={{float:"right", marginRight:"5%", marginBottom:"50%"}}
-            >            
-            </ThumbUpIcon>
-            <div style={{float:"right", marginRight:"-20%", marginTop:"60%", fontSize:16}}>
+
+            <button onClick={dislike}
+            style={{float:"right", marginRight:"5%", }}>             
+            <ThumbDownIcon style={{pointerEvents : "none"}}/>            
+            </button>
+
+            <div style={{float:"right", marginRight:"5%", }}>
+            {idNamePair.likes[0].length}</div>
+            
+            <button onClick={dislike}
+            style={{float:"right", marginRight:"5%", }}>             
+            <ThumbUpIcon style={{pointerEvents : "none"}}/>            
+            </button>
+            <div style={{float:"right", marginRight:"-20%", marginTop:"100px", fontSize:16}}>
             Views: {idNamePair.views}
             </div>
             <KeyboardArrowDownIcon 
-            style={{float:"right", marginRight:"-35%", marginTop:"60%"}}
+            style={{float:"right", marginRight:"-35%", marginTop:"100px"}}
             >            
             </KeyboardArrowDownIcon>
             </div>
-
-
 
         </ListItem>
 

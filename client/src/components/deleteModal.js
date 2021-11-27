@@ -22,13 +22,10 @@ export default function ResponsiveDialog() {
 
     const handleClickOpen = (event) => {
     event.stopPropagation();
-    let theListItself=event.target.parentElement.parentElement.parentElement.parentElement.parentElement
-    let listName =theListItself.getElementsByClassName("MuiBox-root css-15bszol")[0].innerHTML
-  
+    let theListItself=event.target.parentElement.parentElement.parentElement.parentElement
+    let listName =theListItself.getElementsByClassName("MuiBox-root css-1mm12im")[0].innerHTML
     listName=listName.split("<br>By:")[0]
     
-    console.log(listName)
-    console.log(theListItself.id)
     store.markListForDeletion(theListItself.id)
     setOpen(listName);
   };
@@ -47,9 +44,9 @@ export default function ResponsiveDialog() {
 
   return (
     <div>
-      <DeleteSharpIcon variant="outlined" onClick={handleClickOpen} style={{fontSize:36}}>
-        delete list
-      </DeleteSharpIcon>
+      <Button variant="outlined" onClick={handleClickOpen} style={{fontSize:12}}>
+        <DeleteSharpIcon style={{pointerEvents : "none"}}/>
+      </Button>
       <Dialog
         fullScreen={false}
         open={open}

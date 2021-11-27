@@ -170,7 +170,6 @@ function GlobalStoreContextProvider(props) {
         try{ //GET name, items, 
             let response =await api.getAllTop5Lists()
             let allTop5Lists= response.data.data
-            console.log(allTop5Lists)
             for(let i =0; i< allTop5Lists.length;i++){
                 temp=(["Placeholder", allTop5Lists[i].name])
                 for(let j =0; j< 5;j++){
@@ -178,7 +177,6 @@ function GlobalStoreContextProvider(props) {
                 }
                 items.push(temp)
                 //here is where bug occurred for savelist button
-                console.log(temp1)
                 temp1.push(allTop5Lists[i].likes)
                 temp2.push(allTop5Lists[i].author)
                 temp3.push(allTop5Lists[i].publishedDate)
@@ -200,8 +198,6 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.updateTempTop5Lists = async function () {
-        let lists= auth.user.items
-        console.log(lists)
         try{
             let top5ListsResponse= await api.getAllTop5Lists()
             if(top5ListsResponse){
@@ -219,7 +215,6 @@ function GlobalStoreContextProvider(props) {
                         views:auth.user.views[i],
                         comments:auth.user.comments[i],
                     }
-                    console.log(auth.user)
                     await api.createTop5List(top5List)
                 }
             }    
@@ -240,6 +235,16 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+    store.getAllUserTop5Lists = async function () {
+        let response= await api.getAllUserTop5Lists()
+        if (response.data.success==true){
+            return response.data
+        }
+        else{
+            console.log("getAllUserTop5Lists in store has failed")
+        }
+    }
+
     // THESE ARE THE FUNCTIONS THAT WILL UPDATE OUR STORE AND
     // DRIVE THE STATE OF THE APPLICATION. WE'LL CALL THESE IN 
     // RESPONSE TO EVENTS INSIDE OUR COMPONENTS.
@@ -250,9 +255,7 @@ function GlobalStoreContextProvider(props) {
         if (response.data.success) {
             let top5List = response.data.top5List;
             top5List.name = newName;
-            console.log(top5List)
             async function updateList(top5List) {
-                console.log("the id of list name to be changed is : " +top5List._id)
                 response = await api.updateTop5ListById(top5List._id, top5List);//this line doesnt work somehow?
                 if (response.data.success) {
                     async function getListPairs(top5List) {
