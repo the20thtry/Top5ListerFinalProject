@@ -239,14 +239,18 @@ function GlobalStoreContextProvider(props) {
         let response= await store.getAllUserTop5Lists()
         if (response.success){
             let listOfUsers=response.data
-            for(let i=0;i<listOfUsers.length;i++){
-                //for(let j=0; j<listOfUsers["items"][0])
+            for(let i=0;i<listOfUsers.length;i++){ //loops through many users
+                for(let j=0; j<listOfUsers[i].items.length;j++){ //loops through individual user's many lists
+                    let tempId=listOfUsers[i].items[j][0] 
+                    if(id==tempId){
+                        return [{"user":listOfUsers[i]},{"listNumber":j}]
+                    }
+                }
             }
         }
         else{
             console.log("listCard failed to get all UserTop5lists")
         }
-
     }
 
     // THESE ARE THE FUNCTIONS THAT WILL UPDATE OUR STORE AND
@@ -354,7 +358,6 @@ function GlobalStoreContextProvider(props) {
             temp.push(defaultComment)
             updatedInfo["5"]=temp
 
-            console.log(updatedInfo)
             let newUserData= await api.updateUser(auth.user.email, updatedInfo)
             auth.user=newUserData.data.user
             // IF IT'S A VALID LIST THEN LET'S START EDITING IT
@@ -378,7 +381,6 @@ function GlobalStoreContextProvider(props) {
                         payload: pairsArray
                     });
                     let updatedInfo =[]
-
                     for(let i=0; i< response.data.idNamePairs.length;i++){
                         auth.user.items[i][0]=response.data.idNamePairs[i]["_id"]
                     }
@@ -393,6 +395,7 @@ function GlobalStoreContextProvider(props) {
                     updatedInfo["4"]=temp
                     temp= auth.user.comments
                     updatedInfo["5"]=temp
+
                     let newUserData= await api.updateUser(auth.user.email, updatedInfo)
                     auth.user=newUserData.data.user
                 }
