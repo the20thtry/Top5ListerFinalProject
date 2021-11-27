@@ -67,8 +67,7 @@ function ListCard(props) {
         listName=listName.split("<br>By:")[0]
         let id=listName.id
         //we have the id, just need to get user info and update it now
-        let response= await store.getAllUserTop5Lists()
-        console.log(response)
+        store.getUserTop5ListById(id)
     }
 
     let deleteButton=<div></div>

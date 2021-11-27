@@ -16,7 +16,6 @@ createTop5List = (req, res) => {
     if (!top5List) {
         return res.status(400).json({ success: false, error: err })
     }
-
     top5List
         .save() //something went wrong here
         .then(() => {
@@ -60,9 +59,8 @@ updateTop5List = async (req, res) => {
         top5List.likes=body.likes
         top5List.comments=body.comments
         top5List.publishedDate=body.publishedDate
-        top5List.auviewsthor=body.views
+        top5List.views=body.views
 
-        console.log(top5List.items)
         top5List
             .save()
             .then(() => {

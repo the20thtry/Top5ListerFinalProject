@@ -171,29 +171,29 @@ function GlobalStoreContextProvider(props) {
             let response =await api.getAllTop5Lists()
             let allTop5Lists= response.data.data
             for(let i =0; i< allTop5Lists.length;i++){
-                temp=(["Placeholder", allTop5Lists[i].name])
+                temp=([allTop5Lists[i]._id, allTop5Lists[i].name])
                 for(let j =0; j< 5;j++){
                     temp.push(allTop5Lists[i].items[j])
                 }
                 items.push(temp)
-                //here is where bug occurred for savelist button
                 temp1.push(allTop5Lists[i].likes)
                 temp2.push(allTop5Lists[i].author)
                 temp3.push(allTop5Lists[i].publishedDate)
                 temp4.push(allTop5Lists[i].views)
                 temp5.push(allTop5Lists[i].comments)
             }
+        }
+        catch{
+            console.log("reformat went wrong, possibly due to empty list") //set everything tto empty in the user
+        }
+        finally {
             result["0"]=items
             result["1"]=temp1
             result["2"]=temp2
             result["3"]=temp3
             result["4"]=temp4
             result["5"]=temp5
-            return result
-        }
-        catch{
-            console.log("reformat went wrong")
-            return []
+            return result 
         }
     }
 
@@ -204,22 +204,12 @@ function GlobalStoreContextProvider(props) {
                 for(let i=0;i<top5ListsResponse.data.data.length;i++){
                     await api.deleteTop5ListById(top5ListsResponse.data.data[i]._id)
                 }
-                for(let i=0;i<auth.user.items.length;i++){
-
-                    let top5List={
-                        name:auth.user.items[i][1],
-                        items:auth.user.items[i].slice(2),
-                        likes:auth.user.likes[i],
-                        author:auth.user.author[i],
-                        publishedDate:auth.user.publishedDate[i],
-                        views:auth.user.views[i],
-                        comments:auth.user.comments[i],
-                    }
-                    await api.createTop5List(top5List)
-                }
             }    
         }
         catch{ //if getalltop5list results in error, that means the lists are empty
+            console.log("error with updatetempTop5List")
+        }
+        finally{
             for(let i=0;i<auth.user.items.length;i++){
                 let top5List={
                     name:auth.user.items[i][1],
@@ -243,6 +233,20 @@ function GlobalStoreContextProvider(props) {
         else{
             console.log("getAllUserTop5Lists in store has failed")
         }
+    }
+
+    store.getUserTop5ListById = async function (id){
+        let response= await store.getAllUserTop5Lists()
+        if (response.success){
+            let listOfUsers=response.data
+            for(let i=0;i<listOfUsers.length;i++){
+                //for(let j=0; j<listOfUsers["items"][0])
+            }
+        }
+        else{
+            console.log("listCard failed to get all UserTop5lists")
+        }
+
     }
 
     // THESE ARE THE FUNCTIONS THAT WILL UPDATE OUR STORE AND
@@ -280,9 +284,14 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.saveTempListToUser = async function () {
-        let result= await store.reformatAllTop5Lists()
-        let newUserData= await api.updateUser(auth.user.email, result)
-        auth.user=newUserData.data.user    
+        try{
+            let result= await store.reformatAllTop5Lists()
+            let newUserData= await api.updateUser(auth.user.email, result)
+            auth.user=newUserData.data.user    
+        }
+        catch{
+            console.log("saveTempListToUser failed")
+        }
     }
 
 
@@ -325,7 +334,8 @@ function GlobalStoreContextProvider(props) {
             }
             );
             let item=auth.user.items
-            item.push(["newList","Untitled" +this.newListCounter,1,2,3,4,5])
+            console.log(response.data.top5List._id)
+            item.push([JSON.stringify(response.data.top5List._id),"Untitled" +this.newListCounter,1,2,3,4,5])
             let updatedInfo =[]
             updatedInfo["0"]=item
             let temp= auth.user.likes
@@ -344,6 +354,7 @@ function GlobalStoreContextProvider(props) {
             temp.push(defaultComment)
             updatedInfo["5"]=temp
 
+            console.log(updatedInfo)
             let newUserData= await api.updateUser(auth.user.email, updatedInfo)
             auth.user=newUserData.data.user
             // IF IT'S A VALID LIST THEN LET'S START EDITING IT
@@ -366,6 +377,24 @@ function GlobalStoreContextProvider(props) {
                         type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
                         payload: pairsArray
                     });
+                    let updatedInfo =[]
+
+                    for(let i=0; i< response.data.idNamePairs.length;i++){
+                        auth.user.items[i][0]=response.data.idNamePairs[i]["_id"]
+                    }
+                    updatedInfo["0"]=auth.user.items
+                    let temp= auth.user.likes
+                    updatedInfo["1"]=temp
+                    temp=auth.user.author
+                    updatedInfo["2"]=temp
+                    temp= auth.user.publishedDate
+                    updatedInfo["3"]=temp
+                    temp= auth.user.views
+                    updatedInfo["4"]=temp
+                    temp= auth.user.comments
+                    updatedInfo["5"]=temp
+                    let newUserData= await api.updateUser(auth.user.email, updatedInfo)
+                    auth.user=newUserData.data.user
                 }
             }
             catch{
