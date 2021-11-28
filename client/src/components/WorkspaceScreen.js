@@ -81,7 +81,6 @@ function WorkspaceScreen() {
             </div>
             <div className="save-publish-div">
                 <Button class='save-button' onClick={saveList}>save</Button>
-
                 <Button class='publish-button'>Publish </Button>
 
             </div>
