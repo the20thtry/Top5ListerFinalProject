@@ -13,7 +13,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import api from '../api'
 import AuthContext from '../auth'
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-
+import { Typography } from '@mui/material';
 /*
     This is a card in our list of top 5 lists. It lets select
     a list for editing and it has controls for changing its 
@@ -185,7 +185,8 @@ function ListCard(props) {
         }
     }
 
-
+    let comment=""
+    let commentId=""
     //mostly copy pasted from the dislike as well...
     async function handleView(event){
         event.stopPropagation()
@@ -216,19 +217,65 @@ function ListCard(props) {
             temp= response[0].user.comments
             updatedInfo["5"]=temp
 
+            toggleEdit() //needed to show list???
+
             let newUserData= await api.updateUser(email, updatedInfo)
-            auth.user=newUserData.data.user    
+            auth.user=newUserData.data.user    //might cause issues/bugs
             //store.loadIdNamePairs()
             //store.setViewActive()
-            toggleEdit()
+
+
+
         }
         else{
             console.log("view failed")
         }
     }
 
+
+
+    async function handleTypingComment(event){
+        comment=event.target.value
+        commentId= event.target.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.id
+    }
+
+    async function handleComment(event){
+        if(event.key=="Enter"){
+            console.log(commentId)
+            let response= await store.getUserTop5ListById(commentId)
+            if(response){
+                let email= response[0].user.email
+                let updatedInfo =[]
+
+                let temp= response[0].user.likes
+                updatedInfo["1"]=temp
+                updatedInfo["0"]=response[0].user.items
+                temp=response[0].user.author
+                updatedInfo["2"]=temp
+                temp= response[0].user.publishedDate
+                updatedInfo["3"]=temp
+                temp= response[0].user.views    
+                updatedInfo["4"]=temp
+                temp= response[0].user.comments
+
+                temp[response[1].listNumber].push(comment)
+
+                updatedInfo["5"]=temp
+    
+                let newUserData= await api.updateUser(email, updatedInfo)
+                auth.user=newUserData.data.user  
+
+                store.loadIdNamePairs()
+
+            }else{
+                console.log("handleComment failed")
+            }
+        }
+    }
+
     let deleteButton=<div></div>
-    if (true){
+    if (idNamePair.publishedDate == "unpublished" ){//need fix here ->> or user is the list owner
+        console.log(auth.user.email)
         deleteButton= 
         <Box sx={{ p: 1 ,float:"right", marginRight:"5%", marginBottom:"60%"}}>
         <ResponsiveDialog>  </ResponsiveDialog> 
@@ -237,15 +284,20 @@ function ListCard(props) {
 
     let editPublishButton= 
         <Box sx={{ p: 1 }}>
-        <IconButton            onClick={(event) => {
+        <IconButton   onClick={(event) => {
                 handleLoadList(event, idNamePair._id)
             }} aria-label='edit'>
-            <EditIcon style={{fontSize:'16pt'}} />
+            <button style={{fontSize:'16pt'}}><Typography variant="h6" color="red">Edit</Typography></button>
         </IconButton>
         </Box>
     
     if (idNamePair.publishedDate != "unpublished"){
-        editPublishButton= "published: " + idNamePair.publishedDate
+        editPublishButton= 
+        <Box sx={{ p: 1 }}>
+        <div style={{fontSize:'16pt'}}><Typography variant="h6" color="red">published:  {idNamePair.publishedDate}</Typography>
+        </div>
+        </Box>
+        //HEREH
     }
 
     let viewingBlock=<div>  </div>
@@ -253,7 +305,35 @@ function ListCard(props) {
     let views_plus_one= 0
     if (editActive) {
         showListButton=<ArrowUpwardIcon onClick={store.loadIdNamePairs} style={{float:"left", marginLeft:"600px"}}></ArrowUpwardIcon>
-        viewingBlock=<div style={{backgroundColor:"red", width:"750px",height:"300px"}}> 123 </div>
+        viewingBlock=
+        <div style={{backgroundColor:"powderblue", width:"750px",height:"300px"}}> 
+            <div style={{width:"45%", position:"absolute", height:"300px",fontSize:"48", contain:"strict",backgroundColor:"blue", borderRadius:"35px"}}>
+                <Typography variant="h3" color="yellow">1.{idNamePair.items[0]}</Typography>
+                <Typography variant="h3" color="yellow">2.{idNamePair.items[1]}</Typography>
+                <Typography variant="h3" color="yellow">3.{idNamePair.items[2]}</Typography>
+                <Typography variant="h3" color="yellow">4.{idNamePair.items[3]}</Typography>
+                <Typography variant="h3" color="yellow">5.{idNamePair.items[4]}</Typography>
+            </div>
+
+
+            <div style={{left:"50%",width:"45%", position:"absolute", height:"240px",fontSize:"48", contain:"strict",backgroundColor:"powderblue", borderRadius:"15px",overflowY:"scroll"}}>
+            {
+                idNamePair.comments.map((val) => (
+                    <div style={{width:"100%", position:"relative", height:"100px",fontSize:"12", contain:"strict",backgroundColor:"orange", borderRadius:"15px",marginBottom:10,whiteSpace:"normal"}}>
+                    <div><Typography variant="h6" color="blue" style={{marginLeft:10, fontSize:8}}> {idNamePair.author} </Typography></div>
+                    <Typography variant="h6" color="black" style={{marginLeft:10, fontSize:12,}}> {val} </Typography>
+                    </div>
+                ))
+            }
+            </div>
+            <Box
+              sx={{
+                top:"65%",left:"50%",width:"45%", position:"absolute", height:"40px",fontSize:"48", contain:"strict"
+               }}>
+             <TextField fullWidth label="Add Comment" id="fullWidth" onChange={handleTypingComment} onKeyPress={handleComment}/>
+            </Box>
+
+        </div>
         views_plus_one =1
     }
     let cardElement =
@@ -261,7 +341,7 @@ function ListCard(props) {
             id={idNamePair._id}
             key={idNamePair._id}
             sx={{ marginTop: '15px', display: 'flex', p: 1 ,backgroundColor: 'powderblue',borderRadius: 5, border:1}}
-            button
+            
             style={{
                 fontSize: '16pt',
                 width: '800px',

@@ -33,6 +33,20 @@ function WorkspaceScreen() {
 
     }
 
+    async function publish(ev){
+        ev.stopPropagation()
+        let currentList=store.currentList
+        try{
+            await store.changeListName(currentList._id, listName)
+            await store.saveTempListToUser()
+            await store.publishList(currentList._id)
+            store.closeCurrentList()
+        }
+        catch{
+            store.closeCurrentList()
+        }
+    }
+
     function updateListName(ev){
         listName= (ev.target.value)
     }
@@ -81,7 +95,7 @@ function WorkspaceScreen() {
             </div>
             <div className="save-publish-div">
                 <Button class='save-button' onClick={saveList}>save</Button>
-                <Button class='publish-button'>Publish </Button>
+                <Button class='publish-button' onClick={publish}>Publish </Button>
 
             </div>
         </div>

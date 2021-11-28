@@ -283,6 +283,10 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+    store.publishList = async function(id){
+        console.log(id)
+    }
+
     // THESE ARE THE FUNCTIONS THAT WILL UPDATE OUR STORE AND
     // DRIVE THE STATE OF THE APPLICATION. WE'LL CALL THESE IN 
     // RESPONSE TO EVENTS INSIDE OUR COMPONENTS.
