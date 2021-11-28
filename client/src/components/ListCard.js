@@ -217,7 +217,7 @@ function ListCard(props) {
             temp= response[0].user.comments
             updatedInfo["5"]=temp
 
-            toggleEdit() //needed to show list???
+            toggleEdit() //needed to show list
 
             let newUserData= await api.updateUser(email, updatedInfo)
             auth.user=newUserData.data.user    //might cause issues/bugs
@@ -231,8 +231,6 @@ function ListCard(props) {
             console.log("view failed")
         }
     }
-
-
 
     async function handleTypingComment(event){
         comment=event.target.value
@@ -274,8 +272,7 @@ function ListCard(props) {
     }
 
     let deleteButton=<div></div>
-    if (idNamePair.publishedDate == "unpublished" ){//need fix here ->> or user is the list owner
-        console.log(auth.user.email)
+    if (true){//need fix here ->>happens only when in home screen
         deleteButton= 
         <Box sx={{ p: 1 ,float:"right", marginRight:"5%", marginBottom:"60%"}}>
         <ResponsiveDialog>  </ResponsiveDialog> 
@@ -291,10 +288,12 @@ function ListCard(props) {
         </IconButton>
         </Box>
     
-    if (idNamePair.publishedDate != "unpublished"){
+    let color1='yellow'
+    if (idNamePair.publishedDate != "unpublished"){ //changes needed for published lists
+        color1="powderblue"
         editPublishButton= 
         <Box sx={{ p: 1 }}>
-        <div style={{fontSize:'16pt'}}><Typography variant="h6" color="red">published:  {idNamePair.publishedDate}</Typography>
+        <div style={{fontSize:'12pt'}}><Typography variant="h6" color="red" style={{fontSize:'12pt'}}>published:  {idNamePair.publishedDate}</Typography>
         </div>
         </Box>
         //HEREH
@@ -306,7 +305,7 @@ function ListCard(props) {
     if (editActive) {
         showListButton=<ArrowUpwardIcon onClick={store.loadIdNamePairs} style={{float:"left", marginLeft:"600px"}}></ArrowUpwardIcon>
         viewingBlock=
-        <div style={{backgroundColor:"powderblue", width:"750px",height:"300px"}}> 
+        <div style={{backgroundColor:{color1}, width:"750px",height:"300px"}}> 
             <div style={{width:"45%", position:"absolute", height:"300px",fontSize:"48", contain:"strict",backgroundColor:"blue", borderRadius:"35px"}}>
                 <Typography variant="h3" color="yellow">1.{idNamePair.items[0]}</Typography>
                 <Typography variant="h3" color="yellow">2.{idNamePair.items[1]}</Typography>
@@ -316,7 +315,7 @@ function ListCard(props) {
             </div>
 
 
-            <div style={{left:"50%",width:"45%", position:"absolute", height:"240px",fontSize:"48", contain:"strict",backgroundColor:"powderblue", borderRadius:"15px",overflowY:"scroll"}}>
+            <div style={{left:"50%",width:"45%", position:"absolute", height:"240px",fontSize:"48", contain:"strict",backgroundColor:{color1}, borderRadius:"15px",overflowY:"scroll"}}>
             {
                 idNamePair.comments.map((val) => (
                     <div style={{width:"100%", position:"relative", height:"100px",fontSize:"12", contain:"strict",backgroundColor:"orange", borderRadius:"15px",marginBottom:10,whiteSpace:"normal"}}>
@@ -340,15 +339,15 @@ function ListCard(props) {
         <ListItem
             id={idNamePair._id}
             key={idNamePair._id}
-            sx={{ marginTop: '15px', display: 'flex', p: 1 ,backgroundColor: 'powderblue',borderRadius: 5, border:1}}
+            sx={{ marginTop: '15px', display: 'flex', p: 1 ,backgroundColor: color1,borderRadius: 5, border:1}}
             
             style={{
                 fontSize: '16pt',
                 width: '800px',
                 height:'px',
-                position:"relative"
+                position:"relative",
             }}
-        >   <div>
+        >   <div >
                 <Box sx={{ p: 1, flexGrow: 0, mt: 1, fontSize:16 }}>
                     {idNamePair.name} 
                     <br />

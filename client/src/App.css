@@ -246,7 +246,7 @@ body {
 .top5-item-dragged-to {
   display: flex;
   align-items: center;
-  font-size: 36pt;
+  font-size: 30pt;
   height: 18%;
   width:75%;
   border-radius: 25px;

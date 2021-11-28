@@ -2,6 +2,7 @@ const auth = require('../auth')
 const express = require('express')
 const Top5ListController = require('../controllers/top5list-controller')
 const UserController = require('../controllers/user-controller')
+const PublishedTop5ListController = require('../controllers/PublishedTop5List-controller')
 const router = express.Router()
 
 router.post('/top5list', auth.verify, Top5ListController.createTop5List)
@@ -17,5 +18,10 @@ router.post('/login', UserController.login)
 router.get(`/logout/`, UserController.getLoggedOut)
 router.put('/user/:id', auth.verify, UserController.updateUser)
 router.get('/user', UserController.getAllUserTop5Lists)
+
+router.post('/publishedTop5Lists',auth.verify, PublishedTop5ListController.createTop5List)
+router.get('/publishedTop5Lists', PublishedTop5ListController.getTop5Lists)
+
+
 
 module.exports = router

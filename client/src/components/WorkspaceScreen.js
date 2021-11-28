@@ -32,15 +32,19 @@ function WorkspaceScreen() {
         }
 
     }
-
+    var month = [ "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December" ];
     async function publish(ev){
         ev.stopPropagation()
         let currentList=store.currentList
         try{
-            await store.changeListName(currentList._id, listName)
+            let date=(new Date())
+            let formattedDate=month[(date.getUTCMonth())] + " " + date.getDate() + ", " +date.getFullYear()
+            await store.changeListName(currentList._id, listName,formattedDate)
             await store.saveTempListToUser()
             await store.publishList(currentList._id)
             store.closeCurrentList()
+
         }
         catch{
             store.closeCurrentList()
@@ -80,6 +84,29 @@ function WorkspaceScreen() {
                 }
             </List>;
     }
+
+    function currentListValid(currentList){
+        let items=currentList.items
+        for(let i =0;i<5;i++){
+            for(let j=i+1;j<5;j++){
+                if(items[i]==items[j] || items[i].trim()=="" || items[j].trim()==""){
+                    return false
+                }
+            }
+        }
+        return true
+    }
+
+    let publishButton= <div class='publish-button' disabled style={{color:"white"}}>Publish </div>
+    console.log(store.currentList)
+    if(store.currentList){
+        if(store.currentList.publishedDate=="unpublished" &&  currentListValid(store.currentList)){
+            publishButton= <Button class='publish-button' onClick={publish}>Publish </Button>
+        }
+    }
+    
+
+
     return (
         <div id="top5-workspace">
             <FullWidthTextField></FullWidthTextField>
@@ -95,8 +122,7 @@ function WorkspaceScreen() {
             </div>
             <div className="save-publish-div">
                 <Button class='save-button' onClick={saveList}>save</Button>
-                <Button class='publish-button' onClick={publish}>Publish </Button>
-
+                {publishButton}
             </div>
         </div>
     )

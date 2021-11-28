@@ -284,7 +284,9 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.publishList = async function(id){
-        console.log(id)
+        let top5list= (await api.getTop5ListById(id)).data.top5List
+        top5list["email"]=auth.user.email
+        api.publishTop5List(top5list)
     }
 
     // THESE ARE THE FUNCTIONS THAT WILL UPDATE OUR STORE AND
@@ -292,11 +294,12 @@ function GlobalStoreContextProvider(props) {
     // RESPONSE TO EVENTS INSIDE OUR COMPONENTS.
 
     // THIS FUNCTION PROCESSES CHANGING A LIST NAME
-    store.changeListName = async function (id, newName) {
+    store.changeListName = async function (id, newName,publishedDate="unpublished") {
         let response = await api.getTop5ListById(id);
         if (response.data.success) {
             let top5List = response.data.top5List;
             top5List.name = newName;
+            top5List.publishedDate=publishedDate
             async function updateList(top5List) {
                 response = await api.updateTop5ListById(top5List._id, top5List);//this line doesnt work somehow?
                 if (response.data.success) {
@@ -354,7 +357,7 @@ function GlobalStoreContextProvider(props) {
         let defaultComment=[]
         let payload = {
             name: newListName,
-            items: ["?", "?", "?", "?", "?"],
+            items: ["To publish, no slot can be empty", "and no items can repeat", "1", "1", "1"],
             likes:defaultLikes,
             author:defaultAuthor,
             publishedDate:defaultpublishedDate,
@@ -373,7 +376,7 @@ function GlobalStoreContextProvider(props) {
             );
             let item=auth.user.items
             console.log(response.data.top5List._id)
-            item.push([JSON.stringify(response.data.top5List._id),"Untitled" +this.newListCounter,1,2,3,4,5])
+            item.push([JSON.stringify(response.data.top5List._id),"Untitled" +this.newListCounter,"To publish, no slot can be empty","and no items can repeat",1,1,1])
             let updatedInfo =[]
             updatedInfo["0"]=item
             let temp= auth.user.likes
@@ -403,44 +406,47 @@ function GlobalStoreContextProvider(props) {
     }
 
     // THIS FUNCTION LOADS ALL THE ID, NAME PAIRS SO WE CAN LIST ALL THE LISTS
-    store.loadIdNamePairs = async function () {
-        if(auth.user){
-            try{
-                await store.updateTempTop5Lists()
-                const response = await api.getTop5ListPairs();
-                if (response.data.success) {
-                    let pairsArray = response.data.idNamePairs;
-                    storeReducer({
-                        type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
-                        payload: pairsArray
-                    });
-                    let updatedInfo =[]
-                    for(let i=0; i< response.data.idNamePairs.length;i++){
-                        auth.user.items[i][0]=response.data.idNamePairs[i]["_id"]
+    store.loadIdNamePairs = async function (searchCategory="HomeIcon") {
+        if(searchCategory=="HomeIcon"){
+            if(auth.user){
+                try{
+                    await store.updateTempTop5Lists()
+                    const response = await api.getTop5ListPairs();
+                    if (response.data.success) {
+                        let pairsArray = response.data.idNamePairs;
+                        storeReducer({
+                            type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
+                            payload: pairsArray
+                        });
+                        let updatedInfo =[]
+                        for(let i=0; i< response.data.idNamePairs.length;i++){
+                            auth.user.items[i][0]=response.data.idNamePairs[i]["_id"]
+                        }
+                        updatedInfo["0"]=auth.user.items
+                        let temp= auth.user.likes
+                        updatedInfo["1"]=temp
+                        temp=auth.user.author
+                        updatedInfo["2"]=temp
+                        temp= auth.user.publishedDate
+                        updatedInfo["3"]=temp
+                        temp= auth.user.views
+                        updatedInfo["4"]=temp
+                        temp= auth.user.comments
+                        updatedInfo["5"]=temp
+    
+                        let newUserData= await api.updateUser(auth.user.email, updatedInfo)
+                        auth.user=newUserData.data.user
                     }
-                    updatedInfo["0"]=auth.user.items
-                    let temp= auth.user.likes
-                    updatedInfo["1"]=temp
-                    temp=auth.user.author
-                    updatedInfo["2"]=temp
-                    temp= auth.user.publishedDate
-                    updatedInfo["3"]=temp
-                    temp= auth.user.views
-                    updatedInfo["4"]=temp
-                    temp= auth.user.comments
-                    updatedInfo["5"]=temp
-
-                    let newUserData= await api.updateUser(auth.user.email, updatedInfo)
-                    auth.user=newUserData.data.user
+                }
+                catch{
+                    console.log("error, loadidnamepair failed")
                 }
             }
-            catch{
-                console.log("error, loadidnamepair failed")
+            else {
+                console.log("API FAILED TO GET THE LIST PAIRS");
             }
         }
-        else {
-            console.log("API FAILED TO GET THE LIST PAIRS");
-        }
+
     }
 
     // THE FOLLOWING 5 FUNCTIONS ARE FOR COORDINATING THE DELETION

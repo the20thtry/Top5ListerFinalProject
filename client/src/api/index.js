@@ -36,6 +36,9 @@ export const logoutUser = () => api.get(`/logout/`)
 export const updateUser = (email,payload) => api.put(`/user/${email}`,payload)
 export const getAllUserTop5Lists = () => api.get(`/user`)
 
+export const publishTop5List = (payload) => api.post(`/publishedTop5Lists/`, payload)
+export const getAllPublishedTop5List = () => api.get(`/publishedTop5Lists/`)
+
 
 const apis = {
     createTop5List,
@@ -50,7 +53,9 @@ const apis = {
     loginUser,
     logoutUser,
     updateUser,
-    getAllUserTop5Lists
+    getAllUserTop5Lists,
+    publishTop5List,
+    getAllPublishedTop5List
 }
 
 export default apis

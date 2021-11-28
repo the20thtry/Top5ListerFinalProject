@@ -59,31 +59,79 @@ const HomeScreen = () => {
             }
             </List>;
     }
+
+    function selectButton(event){
+        let allIcons=document.getElementsByClassName(event.target.className)
+        let iconSelected=event.target.id
+        for(let i=0;i<allIcons.length;i++){
+            if(allIcons[i].id==iconSelected){
+                console.log(document.getElementById(iconSelected).selected=true)
+            }
+            else{
+                document.getElementById(allIcons[i].id).selected=false
+            }
+        }
+    }
+
+    let searchValue=""
+    function handleTextChange(event){
+        searchValue=event.target.value
+    }
+    function handleSearch(event){
+        if(event.key=="Enter"){
+            let allIcons=document.getElementsByClassName("MuiButtonBase-root MuiFab-root MuiFab-circular MuiFab-sizeLarge css-a8igs1-MuiButtonBase-root-MuiFab-root")
+            for(let i=0;i<allIcons.length;i++){
+                if(allIcons[i].selected==true){
+                    let selectedIcon = allIcons[i].id
+                    store.loadIdNamePairs(selectedIcon)
+                }
+            }
+        }
+    }
+
     return (
         <div id="top5-list-selector"style={{backgroundColor:'gray'}} >
             <div id="list-selector-heading">
             <Fab 
-                onClick={handleCreateNewList}
+                onClick={selectButton}
+                id="HomeIcon"
+                selected={true}
             >
-                <HomeIcon />
+                <HomeIcon  style={{pointerEvents:"none"}}/>
             </Fab>
             <Fab 
-                onClick={handleCreateNewList}
+                onClick={selectButton}
+                id="GroupsIcon"
+                selected={false}
             >
-                <GroupsIcon />
+                <GroupsIcon  style={{pointerEvents:"none"}}/>
             </Fab>
             <Fab 
-                onClick={handleCreateNewList}
+                onClick={selectButton}
+                id="PersonIcon" 
+                selected={false}
             >
-                <PersonIcon />
+                <PersonIcon style={{pointerEvents:"none"}}/>
             </Fab>
             <Fab 
-                onClick={handleCreateNewList}
+                onClick={selectButton}
+                id="FunctionsIcon"
+                selected={false}
             >
-                <FunctionsIcon />
+                <FunctionsIcon style={{pointerEvents:"none"}}/>
             </Fab>
-            <FullWidthTextField></FullWidthTextField>
 
+            <Box
+            onKeyPress={handleSearch}
+            onChange={handleTextChange}
+            sx={{
+                width: 500,
+                maxWidth: '40%',
+                marginRight:5
+            }}
+            >
+            <TextField fullWidth label="search" id="fullWidth" />
+            </Box>
             Sort by
 
                 <AccountMenu></AccountMenu>
