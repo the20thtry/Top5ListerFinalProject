@@ -28,7 +28,8 @@ export const GlobalStoreActionType = {
     UNMARK_LIST_FOR_DELETION: "UNMARK_LIST_FOR_DELETION",
     SET_CURRENT_LIST: "SET_CURRENT_LIST",
     SET_ITEM_EDIT_ACTIVE: "SET_ITEM_EDIT_ACTIVE",
-    SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE"
+    SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE",
+    SET_VIEW_ACTIVE: "SET_VIEW_ACTIVE"
 }
 
 // WE'LL NEED THIS TO PROCESS TRANSACTIONS
@@ -44,7 +45,8 @@ function GlobalStoreContextProvider(props) {
         newListCounter: 0,
         listNameActive: false,
         itemActive: false,
-        listMarkedForDeletion: null
+        listMarkedForDeletion: null,
+        viewActive:false
     });
     const history = useHistory();
 
@@ -64,7 +66,9 @@ function GlobalStoreContextProvider(props) {
                     newListCounter: store.newListCounter,
                     isListNameEditActive: false,
                     isItemEditActive: false,
-                    listMarkedForDeletion: null
+                    listMarkedForDeletion: null,
+                    viewActive: store.viewActive
+
                 });
             }
             // STOP EDITING THE CURRENT LIST
@@ -75,7 +79,9 @@ function GlobalStoreContextProvider(props) {
                     newListCounter: store.newListCounter,
                     isListNameEditActive: false,
                     isItemEditActive: false,
-                    listMarkedForDeletion: null
+                    listMarkedForDeletion: null,
+                    viewActive:  store.viewActive
+
                 })
             }
             // CREATE A NEW LIST
@@ -86,7 +92,9 @@ function GlobalStoreContextProvider(props) {
                     newListCounter: store.newListCounter + 1,
                     isListNameEditActive: false,
                     isItemEditActive: false,
-                    listMarkedForDeletion: null
+                    listMarkedForDeletion: null,
+                    viewActive:  store.viewActive
+
                 })
             }
             // GET ALL THE LISTS SO WE CAN PRESENT THEM
@@ -97,7 +105,9 @@ function GlobalStoreContextProvider(props) {
                     newListCounter: store.newListCounter,
                     isListNameEditActive: false,
                     isItemEditActive: false,
-                    listMarkedForDeletion: null
+                    listMarkedForDeletion: null,
+                    viewActive:  store.viewActive
+
                 });
             }
             // PREPARE TO DELETE A LIST
@@ -108,7 +118,9 @@ function GlobalStoreContextProvider(props) {
                     newListCounter: store.newListCounter,
                     isListNameEditActive: false,
                     isItemEditActive: false,
-                    listMarkedForDeletion: payload
+                    listMarkedForDeletion: payload,
+                    viewActive:  store.viewActive
+
                 });
             }
             // PREPARE TO DELETE A LIST
@@ -119,7 +131,9 @@ function GlobalStoreContextProvider(props) {
                     newListCounter: store.newListCounter,
                     isListNameEditActive: false,
                     isItemEditActive: false,
-                    listMarkedForDeletion: null
+                    listMarkedForDeletion: null,
+                    viewActive:  store.viewActive
+
                 });
             }
             // UPDATE A LIST
@@ -130,7 +144,9 @@ function GlobalStoreContextProvider(props) {
                     newListCounter: store.newListCounter,
                     isListNameEditActive: false,
                     isItemEditActive: false,
-                    listMarkedForDeletion: null
+                    listMarkedForDeletion: null,
+                    viewActive:  store.viewActive
+
                 });
             }
             // START EDITING A LIST ITEM
@@ -141,10 +157,12 @@ function GlobalStoreContextProvider(props) {
                     newListCounter: store.newListCounter,
                     isListNameEditActive: false,
                     isItemEditActive: true,
-                    listMarkedForDeletion: null
+                    listMarkedForDeletion: null,
+                    viewActive:  store.viewActive,
+
                 });
             }
-            // START EDITING A LIST NAME
+            // START EDITING A LIST NAME 
             case GlobalStoreActionType.SET_LIST_NAME_EDIT_ACTIVE: {
                 return setStore({
                     idNamePairs: store.idNamePairs,
@@ -152,7 +170,19 @@ function GlobalStoreContextProvider(props) {
                     newListCounter: store.newListCounter,
                     isListNameEditActive: true,
                     isItemEditActive: false,
-                    listMarkedForDeletion: null
+                    listMarkedForDeletion: null,
+                    viewActive:  store.viewActive
+                });
+            }
+            case GlobalStoreActionType.SET_VIEW_ACTIVE: {
+                return setStore({
+                    idNamePairs: store.idNamePairs,
+                    currentList: payload,
+                    newListCounter: store.newListCounter,
+                    isListNameEditActive: true,
+                    isItemEditActive: false,
+                    listMarkedForDeletion: null,
+                    viewActive: true
                 });
             }
             default:
@@ -409,7 +439,6 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
-
     // THE FOLLOWING 5 FUNCTIONS ARE FOR COORDINATING THE DELETION
     // OF A LIST, WHICH INCLUDES USING A VERIFICATION MODAL. THE
     // FUNCTIONS ARE markListForDeletion, deleteList, deleteMarkedList,
@@ -547,6 +576,14 @@ function GlobalStoreContextProvider(props) {
             payload: null
         });
     }
+
+        // THIS FUNCTION ENABLES THE PROCESS OF opening a list
+    store.setViewActive = function () {
+            storeReducer({
+                type: GlobalStoreActionType.SET_VIEW_ACTIVE,
+                payload: null
+            });
+        }
 
     // THIS FUNCTION ENABLES THE PROCESS OF EDITING AN ITEM
     store.setIsItemEditActive = function () {
