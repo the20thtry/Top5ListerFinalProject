@@ -443,7 +443,7 @@ function GlobalStoreContextProvider(props) {
      }
 
     // THIS FUNCTION LOADS ALL THE ID, NAME PAIRS SO WE CAN LIST ALL THE LISTS
-    store.loadIdNamePairs = async function (searchCategory="HomeIcon", searchValue=0) {
+    store.loadIdNamePairs = async function (searchCategory="HomeIcon", searchValue=0, searchText="") {
         console.log(searchValue)
         store.updatePublishedLists()
         console.log("loading idnamepairs, search Category is: " + searchCategory)
@@ -509,6 +509,8 @@ function GlobalStoreContextProvider(props) {
                                 return a < b ? 1 : (a > b ? -1 : 0);     
                                 })
                         }
+                        pairsArray =(pairsArray.filter(x => x["name"].startsWith(searchText)))
+                        
                         storeReducer({
                             type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
                             payload: pairsArray
@@ -546,6 +548,11 @@ function GlobalStoreContextProvider(props) {
                 return allIcons[i].id
             }
         }
+    }
+
+    store.getSearchValue = function(){
+        let searchBar=document.getElementById("searchBar")
+        return searchBar.value
     }
 
     store.deleteList = async function (listToDelete) {

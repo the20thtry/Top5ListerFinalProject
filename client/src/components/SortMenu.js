@@ -31,19 +31,19 @@ export default function AccountMenu() {
   let selectedIcon=store.getSelectedIcon()
 
   function sortByNewest(){
-    store.loadIdNamePairs(store.getSelectedIcon(),"1")
+    store.loadIdNamePairs(store.getSelectedIcon(),"1",store.getSearchValue())
   }
   function sortByOldest(){
-    store.loadIdNamePairs(store.getSelectedIcon(),"2")
+    store.loadIdNamePairs(store.getSelectedIcon(),"2",store.getSearchValue())
   }
   function sortByViews(){
-    store.loadIdNamePairs(store.getSelectedIcon(),"3")
+    store.loadIdNamePairs(store.getSelectedIcon(),"3",store.getSearchValue())
   }
   function sortByLikes(){
-    store.loadIdNamePairs(store.getSelectedIcon(),"4")
+    store.loadIdNamePairs(store.getSelectedIcon(),"4",store.getSearchValue())
   }
   function sortByDislikes(){
-    store.loadIdNamePairs(store.getSelectedIcon(),"5")
+    store.loadIdNamePairs(store.getSelectedIcon(),"5",store.getSearchValue())
   }
 
   return (

@@ -53,7 +53,7 @@ const HomeScreen = () => {
     if(auth.user){
         author=auth.user.firstName+" "+auth.user.lastName
     }
-    if ((store.idNamePairs[0]) && ((store.idNamePairs.length==auth.user.items.length && store.idNamePairs[0].author==author)
+    if ((store.idNamePairs[0]) && ((store.idNamePairs[0].author==author)
      ||(x && x.selected==false))){// { //YOOO BRUH WTF,ahhh i see used to fix bad bug from before sadge
         listCard = 
             <List sx={{ width: '90%', left: '5%', bgcolor: 'gray' }}>
@@ -90,7 +90,7 @@ const HomeScreen = () => {
     function handleSearch(event){
         if(event.key=="Enter"){
             let icons= store.getSelectedIcon()
-            store.loadIdNamePairs(icons)
+            store.loadIdNamePairs(icons,"0",store.getSearchValue())
         }
     }
 
@@ -135,7 +135,7 @@ const HomeScreen = () => {
                 marginRight:5
             }}
             >
-            <TextField fullWidth label="search" id="fullWidth" />
+            <TextField fullWidth label="search" id="searchBar" />
             </Box>
             Sort by
 
