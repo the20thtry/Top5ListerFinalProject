@@ -227,8 +227,8 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
-    store.updateTempTop5Lists = async function () {
-        try{
+    store.updateTempTop5Lists = async function (newLists="") {
+        try{ //delete all then use user's info to create new lists
             let top5ListsResponse= await api.getAllTop5Lists()
             if(top5ListsResponse){
                 for(let i=0;i<top5ListsResponse.data.data.length;i++){
@@ -240,18 +240,28 @@ function GlobalStoreContextProvider(props) {
             console.log("error with updatetempTop5List")
         }
         finally{
-            for(let i=0;i<auth.user.items.length;i++){
-                let top5List={
-                    name:auth.user.items[i][1],
-                    items:auth.user.items[i].slice(2),
-                    likes:auth.user.likes[i],
-                    author:auth.user.author[i],
-                    publishedDate:auth.user.publishedDate[i], 
-                    views:auth.user.views[i],
-                    comments:auth.user.comments[i],
+            if(newLists==""){
+                for(let i=0;i<auth.user.items.length;i++){
+                    let top5List={
+                        _id:auth.user.items[i][0],
+                        name:auth.user.items[i][1],
+                        items:auth.user.items[i].slice(2),
+                        likes:auth.user.likes[i],
+                        author:auth.user.author[i],
+                        publishedDate:auth.user.publishedDate[i], 
+                        views:auth.user.views[i],
+                        comments:auth.user.comments[i],
+                    }
+                    await api.createTop5List(top5List)
                 }
-                await api.createTop5List(top5List)
             }
+            if(newLists!=""){
+                for(let i=0;i<newLists.length;i++){
+                    console.log(newLists[i])
+                    await api.createTop5List(newLists[i])
+                }
+            }
+
         }
     }
 
@@ -286,6 +296,7 @@ function GlobalStoreContextProvider(props) {
     store.publishList = async function(id){
         let top5list= (await api.getTop5ListById(id)).data.top5List
         top5list["email"]=auth.user.email
+        console.log(top5list)
         api.publishTop5List(top5list)
     }
 
@@ -375,7 +386,6 @@ function GlobalStoreContextProvider(props) {
             }
             );
             let item=auth.user.items
-            console.log(response.data.top5List._id)
             item.push([JSON.stringify(response.data.top5List._id),"Untitled" +this.newListCounter,"To publish, no slot can be empty","and no items can repeat",1,1,1])
             let updatedInfo =[]
             updatedInfo["0"]=item
@@ -404,9 +414,139 @@ function GlobalStoreContextProvider(props) {
             console.log("API FAILED TO CREATE A NEW LIST");
         }
     }
-
+    let x =[
+        {
+            "_id": "61a4258671fbcf47e8f7add0",
+            "name": "Untitled3",
+            "author": "derek ding",
+            "items": [
+                "To publish, no slot can be empty",
+                "and no items can repeat",
+                "1",
+                "12",
+                "13"
+            ],
+            "likes": [
+                [
+                    "61a4231d1f28f127c405d8e6"
+                ],
+                []
+            ],
+            "comments": [
+                "alllah",
+                "alllah1",
+                "alllah2"
+            ],
+            "publishedDate": "November 28, 2021",
+            "views": 6
+        },
+        {
+            "_id": "61a43d6906b0324f7823ea1a",
+            "name": "Untitled0",
+            "author": "derek ding",
+            "items": [
+                "To publish, no slot can be empty",
+                "and no items can repeat",
+                "12222",
+                "1333",
+                "14444"
+            ],
+            "likes": [
+                [],
+                []
+            ],
+            "comments": [],
+            "publishedDate": "November 28, 2021",
+            "views": 1
+        },
+        {
+            "_id": "61a43d6906b0324f7823ea1a",
+            "name": "Untitled0",
+            "author": "derek ding",
+            "items": [
+                "To publish, no slot can be empty",
+                "and no items can repeat",
+                "12222",
+                "1333",
+                "14444"
+            ],
+            "likes": [
+                [],
+                []
+            ],
+            "comments": [],
+            "publishedDate": "November 28, 2021",
+            "views": 1
+        }
+    ]
+    let y=[
+        {
+            "_id": "61a4258671fbcf47e8f7add0",
+            "name": "Untitled3",
+            "author": "derek ding",
+            "items": [
+                "To publish, no slot can be empty",
+                "and no items can repeat",
+                "1",
+                "12",
+                "13"
+            ],
+            "likes": [
+                [
+                    "61a4231d1f28f127c405d8e6"
+                ],
+                []
+            ],
+            "comments": [
+                "alllah",
+                "alllah1",
+                "alllah2"
+            ],
+            "publishedDate": "November 28, 2021",
+            "views": 9
+        },
+        {
+            "_id": "61a43d6906b0324f7823ea1a",
+            "name": "FAKENAMEEEEEEEEEEEE",
+            "author": "derek ding",
+            "items": [
+                "To publish, no slot can be empty",
+                "and no items can repeat",
+                "12222",
+                "1333",
+                "14444"
+            ],
+            "likes": [
+                [],
+                []
+            ],
+            "comments": [],
+            "publishedDate": "November 28, 2021",
+            "views": 2
+        },
+        {
+            "_id": "61a43d6c06b0324f7823ea2f",
+            "name": "Untitled12",
+            "author": "derek ding",
+            "items": [
+                "To publish, no slot can be empty",
+                "and no items can repeat",
+                "1",
+                "1",
+                "1"
+            ],
+            "likes": [
+                [],
+                []
+            ],
+            "comments": [],
+            "publishedDate": "unpublished",
+            "views": 0
+        }
+    ]
     // THIS FUNCTION LOADS ALL THE ID, NAME PAIRS SO WE CAN LIST ALL THE LISTS
-    store.loadIdNamePairs = async function (searchCategory="HomeIcon") {
+    store.loadIdNamePairs = async function (searchCategory="HomeIcon", searchValue="") {
+        console.log("loading idnamepairs, search Category is: " + searchCategory)
         if(searchCategory=="HomeIcon"){
             if(auth.user){
                 try{
@@ -414,28 +554,36 @@ function GlobalStoreContextProvider(props) {
                     const response = await api.getTop5ListPairs();
                     if (response.data.success) {
                         let pairsArray = response.data.idNamePairs;
+                        console.log(pairsArray)
                         storeReducer({
                             type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
                             payload: pairsArray
                         });
-                        let updatedInfo =[]
-                        for(let i=0; i< response.data.idNamePairs.length;i++){
-                            auth.user.items[i][0]=response.data.idNamePairs[i]["_id"]
-                        }
-                        updatedInfo["0"]=auth.user.items
-                        let temp= auth.user.likes
-                        updatedInfo["1"]=temp
-                        temp=auth.user.author
-                        updatedInfo["2"]=temp
-                        temp= auth.user.publishedDate
-                        updatedInfo["3"]=temp
-                        temp= auth.user.views
-                        updatedInfo["4"]=temp
-                        temp= auth.user.comments
-                        updatedInfo["5"]=temp
-    
-                        let newUserData= await api.updateUser(auth.user.email, updatedInfo)
-                        auth.user=newUserData.data.user
+
+                    }
+                }
+                catch{
+                    console.log("error, loadidnamepair failed")
+                }
+            }
+            else {
+                console.log("API FAILED TO GET THE LIST PAIRS");
+            }
+        }
+        if(searchCategory=="GroupsIcon"){
+            console.log("group lists loading")
+            if(auth.user){
+                try{
+                    const response1 = await api.getPublishedTop5ListPairs();
+                    await store.updateTempTop5Lists(response1.data.data)
+                    const response = await api.getTop5ListPairs();
+                    if (response.data.success) {
+                        let pairsArray = response.data.idNamePairs;
+                        console.log(pairsArray)
+                        storeReducer({
+                            type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
+                            payload: pairsArray
+                        });
                     }
                 }
                 catch{
@@ -466,6 +614,9 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.deleteList = async function (listToDelete) {
+        if(listToDelete.publishedDate!="unpublished"){
+            await api.deletePublishedTop5ListById(listToDelete._id);
+        }
         let response = await api.deleteTop5ListById(listToDelete._id);
         if (response.data.success) {
             store.saveTempListToUser()

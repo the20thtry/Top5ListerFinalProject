@@ -1,4 +1,5 @@
 const Top5List = require('../models/top5list-model');
+var mongoose = require('mongoose');
 
 createTop5List = (req, res) => {
     const body = req.body;
@@ -12,10 +13,20 @@ createTop5List = (req, res) => {
     }
 
     const top5List = new Top5List(body);
+    console.log(mongoose.isValidObjectId(body._id))
+    if(body._id && body._id.charAt(0)=="\""){
+        console.log(body._id=body._id.substring(1,body._id.length-1))
+    }
+   //if(body._id && body._id.length>=12 && !mongoose.isValidObjectId(body._id)){
+   //     console.log("allah3 + " +  body._id)
+        top5List._id= mongoose.Types.ObjectId(body._id);
+ //   }
+
     console.log("creating top5List: " + JSON.stringify(top5List));
     if (!top5List) {
         return res.status(400).json({ success: false, error: err })
     }
+
     top5List
         .save() //something went wrong here
         .then(() => {

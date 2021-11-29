@@ -45,7 +45,9 @@ const HomeScreen = () => {
         store.createNewList();
     }
     let listCard = "";
-    if (store && (store.idNamePairs.length==auth.user.items.length)) {
+    if (store){ //&& (store.idNamePairs.length==auth.user.items.length)) { //YOOO BRUH WTF
+        console.log(store.idNamePairs)
+
         listCard = 
             <List sx={{ width: '90%', left: '5%', bgcolor: 'gray' }}>
             {

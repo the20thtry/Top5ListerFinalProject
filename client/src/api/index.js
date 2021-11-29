@@ -38,6 +38,9 @@ export const getAllUserTop5Lists = () => api.get(`/user`)
 
 export const publishTop5List = (payload) => api.post(`/publishedTop5Lists/`, payload)
 export const getAllPublishedTop5List = () => api.get(`/publishedTop5Lists/`)
+export const deletePublishedTop5ListById = (id) => api.delete(`/publishedTop5Lists/${id}`)
+export const updatePublishedTop5ListById = (id, payload) => api.put(`/publishedTop5Lists/${id}`, payload)
+export const getPublishedTop5ListPairs = () => api.get(`/publishedTop5Lists/`)
 
 
 const apis = {
@@ -54,8 +57,12 @@ const apis = {
     logoutUser,
     updateUser,
     getAllUserTop5Lists,
+
     publishTop5List,
-    getAllPublishedTop5List
+    getAllPublishedTop5List,
+    deletePublishedTop5ListById,
+    updatePublishedTop5ListById,
+    getPublishedTop5ListPairs
 }
 
 export default apis

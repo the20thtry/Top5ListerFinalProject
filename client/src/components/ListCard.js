@@ -26,7 +26,7 @@ function ListCard(props) {
     const [editActive, setEditActive] = useState(false);
     const [viewActive, setViewActive] = useState(false);
     const [text, setText] = useState("");
-    const { idNamePair } = props;
+     let { idNamePair } = props;
     const { auth } = useContext(AuthContext);
 
     function handleLoadList(event, id) {
@@ -187,6 +187,7 @@ function ListCard(props) {
 
     let comment=""
     let commentId=""
+
     //mostly copy pasted from the dislike as well...
     async function handleView(event){
         event.stopPropagation()
@@ -217,14 +218,15 @@ function ListCard(props) {
             temp= response[0].user.comments
             updatedInfo["5"]=temp
 
-            toggleEdit() //needed to show list
-
             let newUserData= await api.updateUser(email, updatedInfo)
-            auth.user=newUserData.data.user    //might cause issues/bugs
+            auth.user=newUserData.data.user 
+
+            toggleEdit() //needed to show list
+            
+
+             //might cause issues/bugs
             //store.loadIdNamePairs()
             //store.setViewActive()
-
-
 
         }
         else{
@@ -272,7 +274,8 @@ function ListCard(props) {
     }
 
     let deleteButton=<div></div>
-    if (true){//need fix here ->>happens only when in home screen
+    console.log()
+    if (document.getElementById("HomeIcon").selected==true){//need fix here ->>happens only when in home screen
         deleteButton= 
         <Box sx={{ p: 1 ,float:"right", marginRight:"5%", marginBottom:"60%"}}>
         <ResponsiveDialog>  </ResponsiveDialog> 
@@ -301,12 +304,11 @@ function ListCard(props) {
 
     let viewingBlock=<div>  </div>
     let showListButton=<KeyboardArrowDownIcon onClick={handleView} style={{float:"left", marginLeft:"600px"}}></KeyboardArrowDownIcon>
-    let views_plus_one= 0
     if (editActive) {
-        showListButton=<ArrowUpwardIcon onClick={store.loadIdNamePairs} style={{float:"left", marginLeft:"600px"}}></ArrowUpwardIcon>
+        showListButton=<ArrowUpwardIcon onClick={toggleEdit} style={{float:"left", marginLeft:"600px"}}></ArrowUpwardIcon>
         viewingBlock=
         <div style={{backgroundColor:{color1}, width:"750px",height:"300px"}}> 
-            <div style={{width:"45%", position:"absolute", height:"300px",fontSize:"48", contain:"strict",backgroundColor:"blue", borderRadius:"35px"}}>
+            <div style={{width:"45%", position:"absolute", height:"300px",fontSize:"48", contain:"strict",backgroundColor:"blue", borderRadius:"35px",overflowY:"scroll"}}>
                 <Typography variant="h3" color="yellow">1.{idNamePair.items[0]}</Typography>
                 <Typography variant="h3" color="yellow">2.{idNamePair.items[1]}</Typography>
                 <Typography variant="h3" color="yellow">3.{idNamePair.items[2]}</Typography>
@@ -333,7 +335,6 @@ function ListCard(props) {
             </Box>
 
         </div>
-        views_plus_one =1
     }
     let cardElement =
         <ListItem
@@ -357,12 +358,10 @@ function ListCard(props) {
 
                     <div style={{float:"left", marginLeft:"0px",height:100, width:"750px",fontSize:16}}>
                         {editPublishButton}
-                        Views: {idNamePair.views+views_plus_one}
+                        Views: {idNamePair.views}
                         {showListButton}
                         </div>
         </Box> 
-
-
 
         </div>
         <div style={{height:"40%", width:"100%", position:"absolute", top:"0px"}}>

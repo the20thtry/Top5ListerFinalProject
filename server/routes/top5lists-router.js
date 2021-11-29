@@ -21,6 +21,12 @@ router.get('/user', UserController.getAllUserTop5Lists)
 
 router.post('/publishedTop5Lists',auth.verify, PublishedTop5ListController.createTop5List)
 router.get('/publishedTop5Lists', PublishedTop5ListController.getTop5Lists)
+router.delete('/publishedTop5Lists/:id', auth.verify, PublishedTop5ListController.deleteTop5List)
+router.put('/publishedTop5Lists/:id', PublishedTop5ListController.updateTop5List)
+router.get('/publishedTop5Lists', PublishedTop5ListController.getTop5ListPairs)
+
+
+
 
 
 
