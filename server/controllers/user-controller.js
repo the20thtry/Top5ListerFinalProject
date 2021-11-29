@@ -230,7 +230,8 @@ registerUser = async (req, res) => {
                 author:savedUser.author,
                 publishedDate:savedUser.publishedDate,
                 views:savedUser.views,
-                comments:savedUser.comments
+                comments:savedUser.comments,
+                _id: savedUser._id,
             }
         }).send();
 

@@ -20,10 +20,10 @@ export default function RegisterScreen() {
 
     let Modal=<AlertDialog></AlertDialog>
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
-        auth.registerUser({
+        let newUser =  await auth.registerUser({
             firstName: formData.get('firstName'),
             lastName: formData.get('lastName'),
             email: formData.get('email'),
@@ -31,8 +31,8 @@ export default function RegisterScreen() {
             passwordVerify: formData.get('passwordVerify'),
             //items:[["0","Untitled","Item1","Item2","Item3","Item4","Item5"]] //id, list name, list elements
         }, store);
-
-        
+        console.log(newUser)
+        auth.user=newUser
     };
 
     return (

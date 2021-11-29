@@ -1,4 +1,4 @@
-const Top5List = require('../models/top5list-model');
+const Top5CommunityList = require('../models/top5communitylist-model');
 var mongoose = require('mongoose');
 
 createTop5List = (req, res) => {
@@ -11,12 +11,15 @@ createTop5List = (req, res) => {
         })
     }
 
-    const top5List = new Top5List(body);
+    const top5List = new Top5CommunityList(body);
     console.log(mongoose.isValidObjectId(body._id))
     if(body._id && body._id.charAt(0)=="\""){
         console.log(body._id=body._id.substring(1,body._id.length-1))
     }
+   //if(body._id && body._id.length>=12 && !mongoose.isValidObjectId(body._id)){
+   //     console.log("allah3 + " +  body._id)
         top5List._id= mongoose.Types.ObjectId(body._id);
+    //}
 
     console.log("creating top5List: " + JSON.stringify(top5List));
     if (!top5List) {
@@ -51,7 +54,7 @@ updateTop5List = async (req, res) => {
         })
     }
 
-    Top5List.findOne({ _id: req.params.id }, (err, top5List) => {
+    Top5CommunityList.findOne({ _id: req.params.id }, (err, top5List) => {
         console.log("top5List found: " + JSON.stringify(top5List));
         if (err) {
             return res.status(404).json({
@@ -67,6 +70,9 @@ updateTop5List = async (req, res) => {
         top5List.comments=body.comments
         top5List.publishedDate=body.publishedDate
         top5List.views=body.views
+
+        console.log("Allah10")
+        console.log(top5List)
 
         top5List
             .save()
@@ -89,21 +95,21 @@ updateTop5List = async (req, res) => {
 }
 
 deleteTop5List = async (req, res) => {
-    Top5List.findById({ _id: req.params.id }, (err, top5List) => {
+    Top5CommunityList.findById({ _id: req.params.id }, (err, top5List) => {
         if (err) {
             return res.status(404).json({
                 err,
                 message: 'Top 5 List not found!',
             })
         }
-        Top5List.findOneAndDelete({ _id: req.params.id }, () => {
+        Top5CommunityList.findOneAndDelete({ _id: req.params.id }, () => {
             return res.status(200).json({ success: true, data: top5List })
         }).catch(err => console.log(err))
     })
 }
 
 getTop5ListById = async (req, res) => {
-    await Top5List.findById({ _id: req.params.id }, (err, list) => {
+    await Top5CommunityList.findById({ _id: req.params.id }, (err, list) => {
         if (err) {
             return res.status(400).json({ success: false, error: err });
         }
@@ -111,7 +117,7 @@ getTop5ListById = async (req, res) => {
     }).catch(err => console.log(err))
 }
 getTop5Lists = async (req, res) => {
-    await Top5List.find({}, (err, top5Lists) => {
+    await Top5CommunityList.find({}, (err, top5Lists) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
         }
@@ -124,7 +130,7 @@ getTop5Lists = async (req, res) => {
     }).catch(err => console.log(err))
 }
 getTop5ListPairs = async (req, res) => {
-    await Top5List.find({ }, (err, top5Lists) => {
+    await Top5CommunityList.find({ }, (err, top5Lists) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
         }

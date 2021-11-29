@@ -42,6 +42,12 @@ export const deletePublishedTop5ListById = (id) => api.delete(`/publishedTop5Lis
 export const updatePublishedTop5ListById = (id, payload) => api.put(`/publishedTop5Lists/${id}`, payload)
 export const getPublishedTop5ListPairs = () => api.get(`/publishedTop5Lists/`)
 
+export const createCommunityTop5List = (payload) => api.post(`/communityTop5Lists/`, payload)
+export const getAllCommunityTop5List = () => api.get(`/communityTop5Lists/`)
+export const deleteCommunityTop5ListById = (id) => api.delete(`/communityTop5Lists/${id}`)
+export const updateCommunityTop5ListById = (id, payload) => api.put(`/communityTop5Lists/${id}`, payload)
+export const getCommunityTop5ListPairs = () => api.get(`/communityTop5Lists/`)
+
 
 const apis = {
     createTop5List,

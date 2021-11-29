@@ -74,6 +74,7 @@ function ListCard(props) {
     }
 
     async function dislike(event){
+        console.log(auth.user)
         event.stopPropagation()
         //copy pasted from deleteModal
         let theListItself=event.target.parentElement.parentElement.parentElement.parentElement
@@ -83,14 +84,23 @@ function ListCard(props) {
         //we have the id, just need to get user info and update it now
         let response = await store.getUserTop5ListById(id)
         if (response){
-            
             let likesArray=(response[0].user.likes[response[1].listNumber])[0]
             let dislikesArray=(response[0].user.likes[response[1].listNumber])[1]
             //just keeping the basic stuffs
             let email= response[0].user.email
             let updatedInfo =[]
 
-            let temp= response[0].user.likes
+            updatedInfo["0"]=response[0].user.items
+            let temp=response[0].user.author
+            updatedInfo["2"]=temp
+            temp= response[0].user.publishedDate
+            updatedInfo["3"]=temp
+            temp= response[0].user.views
+            updatedInfo["4"]=temp
+            temp= response[0].user.comments
+            updatedInfo["5"]=temp
+             
+            temp= response[0].user.likes
 
             for(let i=0;i<likesArray.length;i++){
                 const index = likesArray.indexOf(auth.user._id);
@@ -115,7 +125,8 @@ function ListCard(props) {
                 let top5List=[]
                 top5List["3"]=temp[response[1].listNumber]
                 top5List["0"]=response[0].user.items[response[1].listNumber][1] //name
-                top5List["1"]=response[0].user.items[response[1].listNumber].splice(2,7) //items
+                top5List["1"]=response[0].user.items[response[1].listNumber].slice(2,7) //items
+                console.log(response[0].user.items[response[1].listNumber])
                 temp=response[0].user.author
                 top5List["2"]=temp[response[1].listNumber]
                 temp= response[0].user.publishedDate
@@ -124,18 +135,10 @@ function ListCard(props) {
                 top5List["6"]=temp[response[1].listNumber]
                 temp= response[0].user.comments
                 top5List["4"]=temp[response[1].listNumber]
-                api.updatePublishedTop5ListById(response[0].user.items[response[1].listNumber][0],top5List)
+                await api.updatePublishedTop5ListById(response[0].user.items[response[1].listNumber][0],top5List)
             }
 
-            updatedInfo["0"]=response[0].user.items
-            temp=response[0].user.author
-            updatedInfo["2"]=temp
-            temp= response[0].user.publishedDate
-            updatedInfo["3"]=temp
-            temp= response[0].user.views
-            updatedInfo["4"]=temp
-            temp= response[0].user.comments
-            updatedInfo["5"]=temp
+
 
 
             let newUserData= await api.updateUser(email, updatedInfo)
@@ -166,8 +169,18 @@ function ListCard(props) {
             //just keeping the basic stuffs
             let email= response[0].user.email
             let updatedInfo =[]
+            
+            updatedInfo["0"]=response[0].user.items
+            let temp=response[0].user.author
+            updatedInfo["2"]=temp
+            temp= response[0].user.publishedDate
+            updatedInfo["3"]=temp
+            temp= response[0].user.views
+            updatedInfo["4"]=temp
+            temp= response[0].user.comments
+            updatedInfo["5"]=temp
 
-            let temp= response[0].user.likes
+            temp= response[0].user.likes
 
             for(let i=0;i<dislikesArray.length;i++){
                 const index = dislikesArray.indexOf(auth.user._id);
@@ -193,7 +206,7 @@ function ListCard(props) {
                 top5List["3"]=temp[response[1].listNumber]
 
                 top5List["0"]=response[0].user.items[response[1].listNumber][1] //name
-                top5List["1"]=(response[0].user.items[response[1].listNumber]).splice(2,7) //items
+                top5List["1"]=(response[0].user.items[response[1].listNumber]).slice(2) //items
                 temp=response[0].user.author
                 top5List["2"]=temp[response[1].listNumber]
                 temp= response[0].user.publishedDate
@@ -202,18 +215,9 @@ function ListCard(props) {
                 top5List["6"]=temp[response[1].listNumber]
                 temp= response[0].user.comments
                 top5List["4"]=temp[response[1].listNumber]
-                api.updatePublishedTop5ListById(response[0].user.items[response[1].listNumber][0],top5List)
+                await api.updatePublishedTop5ListById(response[0].user.items[response[1].listNumber][0],top5List)
             }
 
-            updatedInfo["0"]=response[0].user.items
-            temp=response[0].user.author
-            updatedInfo["2"]=temp
-            temp= response[0].user.publishedDate
-            updatedInfo["3"]=temp
-            temp= response[0].user.views
-            updatedInfo["4"]=temp
-            temp= response[0].user.comments
-            updatedInfo["5"]=temp
 
             let newUserData= await api.updateUser(email, updatedInfo)
             store.loadIdNamePairs(selectedIcon)
@@ -262,14 +266,18 @@ function ListCard(props) {
             temp= response[0].user.views
 
             temp[response[1].listNumber]+=1
+
             updatedInfo["4"]=temp
+            temp= response[0].user.comments
+            updatedInfo["5"]=temp
 
             if(response[0].user.publishedDate[response[1].listNumber]!="unpublished"){//needs to update the published list as well
                 let top5List=[]
 
+                temp= response[0].user.views
                 top5List["6"]=temp[response[1].listNumber]
                 top5List["0"]=response[0].user.items[response[1].listNumber][1] //name
-                top5List["1"]=(response[0].user.items[response[1].listNumber]).splice(2,7) //items
+                top5List["1"]=(response[0].user.items[response[1].listNumber]).slice(2) //items
                 temp=response[0].user.author
                 top5List["2"]=temp[response[1].listNumber]
                 temp= response[0].user.publishedDate
@@ -278,12 +286,8 @@ function ListCard(props) {
                 top5List["3"]=temp[response[1].listNumber]
                 temp= response[0].user.comments
                 top5List["4"]=temp[response[1].listNumber]
-                api.updatePublishedTop5ListById(response[0].user.items[response[1].listNumber][0],top5List)
+                await api.updatePublishedTop5ListById(response[0].user.items[response[1].listNumber][0],top5List)
             }
-
-            temp= response[0].user.comments
-            updatedInfo["5"]=temp
-
             
 
             let newUserData= await api.updateUser(email, updatedInfo)

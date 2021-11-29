@@ -441,19 +441,55 @@ function GlobalStoreContextProvider(props) {
     function getMonthFromString(mon){
         return new Date(Date.parse(mon +" 1, 2012")).getMonth()+1
      }
+    function tallyVotes(idNamePairs){
+        let communityList=[]
+        for(let i=0;i<idNamePairs.length;i++){
+            let items=[]
+            let newElement=-1
+            for(let j=0;j<communityList.length;j++){
+                if(communityList[j].name==idNamePairs[i].name){//same list, add votes to items/add new items
+                    newElement=j
+                }
+            }
+            if(newElement==-1){
+                communityList.push(idNamePairs[i])
+                for(let k=0;k<4;k++){
+                    let itemEntry=idNamePairs[i].items[k]
+                    console.log("pushing more: "+ itemEntry)
+                    items[itemEntry]=(5-k)
+                    console.log(items.length)
+                }
+                communityList[communityList.length-1]["votes"]=items
+            }
+            else{
+                for(let k=0;k<5;k++){
+                    let itemEntry=communityList[newElement].items[k]
+                    console.log(itemEntry)
+                    if(items[itemEntry]){
+                        items[itemEntry]+=(5-k)
+                    }else{
+                        items[itemEntry]=(5-k)  
+                    }
+                }
+                communityList[newElement]["votes"]=items
+            }
+            for(let j=0;j<idNamePairs.length;j++){
+
+            }
+        }
+        return communityList
+    }
 
     // THIS FUNCTION LOADS ALL THE ID, NAME PAIRS SO WE CAN LIST ALL THE LISTS
     store.loadIdNamePairs = async function (searchCategory="HomeIcon", searchValue=0, searchText="") {
-        console.log(searchValue)
         store.updatePublishedLists()
         console.log("loading idnamepairs, search Category is: " + searchCategory)
             if(auth.user){
                 try{
-                    console.log(searchCategory)
                     if(searchCategory=="HomeIcon"){
                         await store.updateTempTop5Lists()
                     }
-                    else if(searchCategory=="GroupsIcon"){
+                    else if(searchCategory=="GroupsIcon" || searchCategory=="PersonIcon" || searchCategory=="FunctionsIcon"){
                         const response1 = await api.getPublishedTop5ListPairs();
                         await store.updateTempTop5Lists(response1.data.data)
                     }
@@ -509,8 +545,14 @@ function GlobalStoreContextProvider(props) {
                                 return a < b ? 1 : (a > b ? -1 : 0);     
                                 })
                         }
-                        pairsArray =(pairsArray.filter(x => x["name"].startsWith(searchText)))
-                        
+                        if(searchCategory=="GroupsIcon")
+                            pairsArray =(pairsArray.filter(x => x["name"].startsWith(searchText)))
+                        if(searchCategory=="PersonIcon")
+                            pairsArray =(pairsArray.filter(x => x["author"].startsWith(searchText)))
+                        if(searchCategory=="FunctionsIcon"){
+                            console.log(tallyVotes(pairsArray))
+                        }
+
                         storeReducer({
                             type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
                             payload: pairsArray
