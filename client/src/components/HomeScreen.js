@@ -12,6 +12,8 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import AccountMenu from './SortMenu';
 
+
+
 /*
     This React component lists all the top5 lists in the UI.
     
@@ -32,12 +34,12 @@ function FullWidthTextField() {
     </Box>
   );
 }
+
 const HomeScreen = () => {
     const { auth } = useContext(AuthContext);
     const { store } = useContext(GlobalStoreContext);
 
-
-    useEffect(() => {
+    useEffect(async () => {
         store.loadIdNamePairs();
     }, []);
 
@@ -45,7 +47,14 @@ const HomeScreen = () => {
         store.createNewList();
     }
     let listCard = "";
-    if (store){ //&& (store.idNamePairs.length==auth.user.items.length)) { //YOOO BRUH WTF
+    let x=document.getElementById("HomeIcon")
+
+    let author=""
+    if(auth.user){
+        author=auth.user.firstName+" "+auth.user.lastName
+    }
+    if ((store.idNamePairs[0]) && ((store.idNamePairs.length==auth.user.items.length && store.idNamePairs[0].author==author)
+     ||(x && x.selected==false))){// { //YOOO BRUH WTF,ahhh i see used to fix bad bug from before sadge
         listCard = 
             <List sx={{ width: '90%', left: '5%', bgcolor: 'gray' }}>
             {
@@ -65,7 +74,7 @@ const HomeScreen = () => {
         let iconSelected=event.target.id
         for(let i=0;i<allIcons.length;i++){
             if(allIcons[i].id==iconSelected){
-                console.log(document.getElementById(iconSelected).selected=true)
+                return document.getElementById(iconSelected).selected=true
             }
             else{
                 document.getElementById(allIcons[i].id).selected=false
@@ -77,15 +86,11 @@ const HomeScreen = () => {
     function handleTextChange(event){
         searchValue=event.target.value
     }
+
     function handleSearch(event){
         if(event.key=="Enter"){
-            let allIcons=document.getElementsByClassName("MuiButtonBase-root MuiFab-root MuiFab-circular MuiFab-sizeLarge css-a8igs1-MuiButtonBase-root-MuiFab-root")
-            for(let i=0;i<allIcons.length;i++){
-                if(allIcons[i].selected==true){
-                    let selectedIcon = allIcons[i].id
-                    store.loadIdNamePairs(selectedIcon)
-                }
-            }
+            let icons= store.getSelectedIcon()
+            store.loadIdNamePairs(icons)
         }
     }
 
@@ -144,6 +149,7 @@ const HomeScreen = () => {
  
             </div>
         </div>)
+        
 }
 
 export default HomeScreen;

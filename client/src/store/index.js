@@ -257,7 +257,6 @@ function GlobalStoreContextProvider(props) {
             }
             if(newLists!=""){
                 for(let i=0;i<newLists.length;i++){
-                    console.log(newLists[i])
                     await api.createTop5List(newLists[i])
                 }
             }
@@ -439,12 +438,18 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+    function getMonthFromString(mon){
+        return new Date(Date.parse(mon +" 1, 2012")).getMonth()+1
+     }
+
     // THIS FUNCTION LOADS ALL THE ID, NAME PAIRS SO WE CAN LIST ALL THE LISTS
-    store.loadIdNamePairs = async function (searchCategory="HomeIcon", searchValue="") {
+    store.loadIdNamePairs = async function (searchCategory="HomeIcon", searchValue=0) {
+        console.log(searchValue)
         store.updatePublishedLists()
         console.log("loading idnamepairs, search Category is: " + searchCategory)
             if(auth.user){
                 try{
+                    console.log(searchCategory)
                     if(searchCategory=="HomeIcon"){
                         await store.updateTempTop5Lists()
                     }
@@ -455,6 +460,55 @@ function GlobalStoreContextProvider(props) {
                     const response = await api.getTop5ListPairs();
                     if (response.data.success) {
                         let pairsArray = response.data.idNamePairs;
+                        if(searchValue==1 || searchValue==2 ){
+                            pairsArray=pairsArray.sort(function(a, b){
+                                a=a["publishedDate"].split(" ")
+                                b=b["publishedDate"].split(" ")
+                                a[0]= getMonthFromString(a[0])
+                                b[0]= getMonthFromString(b[0])
+                                if(a==["unpublished"])
+                                    return -1
+                                else if(b==["unpublished"])
+                                    return 1
+                                if(a[2]>b[2])
+                                    return 1
+                                else if(b[2]>a[2])
+                                    return -1
+                                else{
+                                    if(a[0]>b[0])
+                                        return 1
+                                    else if(a[0]<b[0])
+                                     return-1
+                                    else{
+                                        return a[1] < b[1] ? -1 : (a[1] > b[1] ? 1 : 0);                                    
+                                }
+                                }
+                            });
+                            if(searchValue==2){
+                                pairsArray.reverse()
+                            }
+                        }
+                        if(searchValue==3){
+                            pairsArray=pairsArray.sort(function(a, b){
+                            a=a["views"]
+                            b=b["views"]
+                            return a < b ? 1 : (a > b ? -1 : 0);     
+                            })
+                        }
+                        if(searchValue==4){
+                            pairsArray=pairsArray.sort(function(a, b){
+                                a=a["likes"][0].length
+                                b=b["likes"][0].length
+                                return a < b ? 1 : (a > b ? -1 : 0);     
+                                })
+                        }
+                        if(searchValue==5){
+                            pairsArray=pairsArray.sort(function(a, b){
+                                a=a["likes"][1].length
+                                b=b["likes"][1].length
+                                return a < b ? 1 : (a > b ? -1 : 0);     
+                                })
+                        }
                         storeReducer({
                             type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
                             payload: pairsArray
@@ -483,6 +537,14 @@ function GlobalStoreContextProvider(props) {
                 type: GlobalStoreActionType.MARK_LIST_FOR_DELETION,
                 payload: top5List
             });
+        }
+    }
+    store.getSelectedIcon = function (){
+        let allIcons=document.getElementsByClassName("MuiButtonBase-root MuiFab-root MuiFab-circular MuiFab-sizeLarge css-a8igs1-MuiButtonBase-root-MuiFab-root")
+        for(let i=0;i<allIcons.length;i++){
+            if(allIcons[i].selected==true){
+                return allIcons[i].id
+            }
         }
     }
 

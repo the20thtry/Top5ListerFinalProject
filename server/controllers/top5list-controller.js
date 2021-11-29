@@ -71,6 +71,9 @@ updateTop5List = async (req, res) => {
         top5List.publishedDate=body.publishedDate
         top5List.views=body.views
 
+        console.log("Allah10")
+        console.log(top5List)
+
         top5List
             .save()
             .then(() => {

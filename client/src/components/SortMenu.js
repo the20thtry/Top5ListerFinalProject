@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useContext, useState } from 'react'
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import Menu from '@mui/material/Menu';
@@ -12,10 +12,14 @@ import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 import SortIcon from '@mui/icons-material/Sort';
+import { GlobalStoreContext } from '../store'
+import { Fragment } from 'react';
+
 
 
 export default function AccountMenu() {
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const { store } = useContext(GlobalStoreContext);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -23,8 +27,27 @@ export default function AccountMenu() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  let selectedIcon=store.getSelectedIcon()
+
+  function sortByNewest(){
+    store.loadIdNamePairs(store.getSelectedIcon(),"1")
+  }
+  function sortByOldest(){
+    store.loadIdNamePairs(store.getSelectedIcon(),"2")
+  }
+  function sortByViews(){
+    store.loadIdNamePairs(store.getSelectedIcon(),"3")
+  }
+  function sortByLikes(){
+    store.loadIdNamePairs(store.getSelectedIcon(),"4")
+  }
+  function sortByDislikes(){
+    store.loadIdNamePairs(store.getSelectedIcon(),"5")
+  }
+
   return (
-    <React.Fragment>
+    <Fragment>
       <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
         <Tooltip title="Account settings">
           <IconButton onClick={handleClick} size="small" sx={{ ml: 2 }}>
@@ -66,23 +89,23 @@ export default function AccountMenu() {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem>
+        <MenuItem onClick={sortByNewest}>
            Published Date (Newest)
         </MenuItem>
-        <MenuItem>
+        <MenuItem onClick={sortByOldest}>
            Published Date (Oldest)
         </MenuItem>
         <Divider />
-        <MenuItem>
+        <MenuItem onClick={sortByViews}>
           Views
         </MenuItem>
-        <MenuItem>
+        <MenuItem onClick={sortByLikes}>
           Likes
         </MenuItem>
-        <MenuItem>
+        <MenuItem onClick={sortByDislikes}>
           Dislikes
         </MenuItem>
       </Menu>
-    </React.Fragment>
+    </Fragment>
   );
 }

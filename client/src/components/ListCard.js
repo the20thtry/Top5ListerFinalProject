@@ -114,9 +114,8 @@ function ListCard(props) {
             if(response[0].user.publishedDate[response[1].listNumber]!="unpublished"){//needs to update the published list as well
                 let top5List=[]
                 top5List["3"]=temp[response[1].listNumber]
-
                 top5List["0"]=response[0].user.items[response[1].listNumber][1] //name
-                top5List["1"]=(response[0].user.items[response[1].listNumber]).splice(2,7) //items
+                top5List["1"]=response[0].user.items[response[1].listNumber].splice(2,7) //items
                 temp=response[0].user.author
                 top5List["2"]=temp[response[1].listNumber]
                 temp= response[0].user.publishedDate
@@ -138,7 +137,11 @@ function ListCard(props) {
             temp= response[0].user.comments
             updatedInfo["5"]=temp
 
+
             let newUserData= await api.updateUser(email, updatedInfo)
+            if(document.getElementById("HomeIcon").selected==true){
+                store.saveTempListToUser()
+            }
             store.loadIdNamePairs(selectedIcon)
         }
         else{
@@ -290,8 +293,8 @@ function ListCard(props) {
             toggleEdit() //needed to show list
             
 
-             //might cause issues/bugs
-            //store.loadIdNamePairs()
+            //might cause issues/bugs
+            //store.loadIdNamePairs(selectedIcon)
             //store.setViewActive()
 
         }
