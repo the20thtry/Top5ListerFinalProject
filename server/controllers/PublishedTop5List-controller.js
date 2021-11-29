@@ -36,7 +36,6 @@ createTop5List = (req, res) => {
 
 updateTop5List = async (req, res) => {
     const body = req.body
-    console.log("allah8")
 
     console.log("updateTop5List: " + JSON.stringify(body));
     if (!body) {
