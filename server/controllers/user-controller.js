@@ -166,7 +166,7 @@ login = async (req, res) => {
 
 registerUser = async (req, res) => {
     try {
-        const { firstName, lastName, email, password, passwordVerify, items} = req.body;
+        const { firstName, lastName, email, password, passwordVerify} = req.body;
         if (!firstName || !lastName || !email || !password || !passwordVerify) {
             return res
                 .status(400)
@@ -200,11 +200,12 @@ registerUser = async (req, res) => {
         const salt = await bcrypt.genSalt(saltRounds);
         const passwordHash = await bcrypt.hash(password, salt);
 
-        let likes=[[[],[]]]
-        let author= [firstName + " "+ lastName]
-        let publishedDate=["unpublished"]
-        let views=[0]
-        let comments=[[""]]
+        let items=[]
+        let likes=[]
+        let author= []
+        let publishedDate=[]
+        let views=[]
+        let comments=[]
         const newUser = new User({
             firstName, lastName, email, passwordHash,items, likes, author, publishedDate,views,comments
         });

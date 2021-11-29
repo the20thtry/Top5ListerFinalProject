@@ -277,11 +277,14 @@ function GlobalStoreContextProvider(props) {
 
     store.getUserTop5ListById = async function (id){
         let response= await store.getAllUserTop5Lists()
-        if (response.success){
+        if (response){
             let listOfUsers=response.data
             for(let i=0;i<listOfUsers.length;i++){ //loops through many users
                 for(let j=0; j<listOfUsers[i].items.length;j++){ //loops through individual user's many lists
                     let tempId=listOfUsers[i].items[j][0] 
+                    if(tempId.charAt(0)=="\""){
+                        tempId=tempId.substring(1,tempId.length-1)//gets if of the "" at start and end of id for user items
+                    }
                     if(id==tempId){
                         return [{"user":listOfUsers[i]},{"listNumber":j}]
                     }
@@ -414,172 +417,44 @@ function GlobalStoreContextProvider(props) {
             console.log("API FAILED TO CREATE A NEW LIST");
         }
     }
-    let x =[
-        {
-            "_id": "61a4258671fbcf47e8f7add0",
-            "name": "Untitled3",
-            "author": "derek ding",
-            "items": [
-                "To publish, no slot can be empty",
-                "and no items can repeat",
-                "1",
-                "12",
-                "13"
-            ],
-            "likes": [
-                [
-                    "61a4231d1f28f127c405d8e6"
-                ],
-                []
-            ],
-            "comments": [
-                "alllah",
-                "alllah1",
-                "alllah2"
-            ],
-            "publishedDate": "November 28, 2021",
-            "views": 6
-        },
-        {
-            "_id": "61a43d6906b0324f7823ea1a",
-            "name": "Untitled0",
-            "author": "derek ding",
-            "items": [
-                "To publish, no slot can be empty",
-                "and no items can repeat",
-                "12222",
-                "1333",
-                "14444"
-            ],
-            "likes": [
-                [],
-                []
-            ],
-            "comments": [],
-            "publishedDate": "November 28, 2021",
-            "views": 1
-        },
-        {
-            "_id": "61a43d6906b0324f7823ea1a",
-            "name": "Untitled0",
-            "author": "derek ding",
-            "items": [
-                "To publish, no slot can be empty",
-                "and no items can repeat",
-                "12222",
-                "1333",
-                "14444"
-            ],
-            "likes": [
-                [],
-                []
-            ],
-            "comments": [],
-            "publishedDate": "November 28, 2021",
-            "views": 1
+
+    store.updatePublishedLists = async function () {
+        let response = await store.getAllUserTop5Lists()
+        let Users=response.data
+        for(let i =0;i<Users.length;i++){
+            for(let j=0;j<Users[i].publishedDate.length;j++){
+                if(Users[i].publishedDate[j]!="unpublished"){ //these are published lists,  now update them
+                    let top5List=[]
+                    top5List["0"]=Users[i].items[j][1]
+                    top5List["1"] = (Users[i].items[j]).slice(2,7)
+                    top5List["2"]=Users[i].author[j]
+                    top5List["3"]=Users[i].likes[j]
+                    top5List["4"]=Users[i].comments[j]
+                    top5List["5"]=Users[i].publishedDate[j]
+                    top5List["6"]=Users[i].views[j]
+
+                    await api.updatePublishedTop5ListById(Users[i].items[j][0],(top5List))
+                }
+            }
         }
-    ]
-    let y=[
-        {
-            "_id": "61a4258671fbcf47e8f7add0",
-            "name": "Untitled3",
-            "author": "derek ding",
-            "items": [
-                "To publish, no slot can be empty",
-                "and no items can repeat",
-                "1",
-                "12",
-                "13"
-            ],
-            "likes": [
-                [
-                    "61a4231d1f28f127c405d8e6"
-                ],
-                []
-            ],
-            "comments": [
-                "alllah",
-                "alllah1",
-                "alllah2"
-            ],
-            "publishedDate": "November 28, 2021",
-            "views": 9
-        },
-        {
-            "_id": "61a43d6906b0324f7823ea1a",
-            "name": "FAKENAMEEEEEEEEEEEE",
-            "author": "derek ding",
-            "items": [
-                "To publish, no slot can be empty",
-                "and no items can repeat",
-                "12222",
-                "1333",
-                "14444"
-            ],
-            "likes": [
-                [],
-                []
-            ],
-            "comments": [],
-            "publishedDate": "November 28, 2021",
-            "views": 2
-        },
-        {
-            "_id": "61a43d6c06b0324f7823ea2f",
-            "name": "Untitled12",
-            "author": "derek ding",
-            "items": [
-                "To publish, no slot can be empty",
-                "and no items can repeat",
-                "1",
-                "1",
-                "1"
-            ],
-            "likes": [
-                [],
-                []
-            ],
-            "comments": [],
-            "publishedDate": "unpublished",
-            "views": 0
-        }
-    ]
+    }
+
     // THIS FUNCTION LOADS ALL THE ID, NAME PAIRS SO WE CAN LIST ALL THE LISTS
     store.loadIdNamePairs = async function (searchCategory="HomeIcon", searchValue="") {
+        store.updatePublishedLists()
         console.log("loading idnamepairs, search Category is: " + searchCategory)
-        if(searchCategory=="HomeIcon"){
             if(auth.user){
                 try{
-                    await store.updateTempTop5Lists()
-                    const response = await api.getTop5ListPairs();
-                    if (response.data.success) {
-                        let pairsArray = response.data.idNamePairs;
-                        console.log(pairsArray)
-                        storeReducer({
-                            type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
-                            payload: pairsArray
-                        });
-
+                    if(searchCategory=="HomeIcon"){
+                        await store.updateTempTop5Lists()
                     }
-                }
-                catch{
-                    console.log("error, loadidnamepair failed")
-                }
-            }
-            else {
-                console.log("API FAILED TO GET THE LIST PAIRS");
-            }
-        }
-        if(searchCategory=="GroupsIcon"){
-            console.log("group lists loading")
-            if(auth.user){
-                try{
-                    const response1 = await api.getPublishedTop5ListPairs();
-                    await store.updateTempTop5Lists(response1.data.data)
+                    else if(searchCategory=="GroupsIcon"){
+                        const response1 = await api.getPublishedTop5ListPairs();
+                        await store.updateTempTop5Lists(response1.data.data)
+                    }
                     const response = await api.getTop5ListPairs();
                     if (response.data.success) {
                         let pairsArray = response.data.idNamePairs;
-                        console.log(pairsArray)
                         storeReducer({
                             type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
                             payload: pairsArray
@@ -593,8 +468,6 @@ function GlobalStoreContextProvider(props) {
             else {
                 console.log("API FAILED TO GET THE LIST PAIRS");
             }
-        }
-
     }
 
     // THE FOLLOWING 5 FUNCTIONS ARE FOR COORDINATING THE DELETION

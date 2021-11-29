@@ -83,6 +83,7 @@ function ListCard(props) {
         //we have the id, just need to get user info and update it now
         let response = await store.getUserTop5ListById(id)
         if (response){
+            
             let likesArray=(response[0].user.likes[response[1].listNumber])[0]
             let dislikesArray=(response[0].user.likes[response[1].listNumber])[1]
             //just keeping the basic stuffs
@@ -109,6 +110,24 @@ function ListCard(props) {
             }
 
             updatedInfo["1"]=temp
+
+            if(response[0].user.publishedDate[response[1].listNumber]!="unpublished"){//needs to update the published list as well
+                let top5List=[]
+                top5List["3"]=temp[response[1].listNumber]
+
+                top5List["0"]=response[0].user.items[response[1].listNumber][1] //name
+                top5List["1"]=(response[0].user.items[response[1].listNumber]).splice(2,7) //items
+                temp=response[0].user.author
+                top5List["2"]=temp[response[1].listNumber]
+                temp= response[0].user.publishedDate
+                top5List["5"]=temp[response[1].listNumber]
+                temp= response[0].user.views
+                top5List["6"]=temp[response[1].listNumber]
+                temp= response[0].user.comments
+                top5List["4"]=temp[response[1].listNumber]
+                api.updatePublishedTop5ListById(response[0].user.items[response[1].listNumber][0],top5List)
+            }
+
             updatedInfo["0"]=response[0].user.items
             temp=response[0].user.author
             updatedInfo["2"]=temp
@@ -120,8 +139,7 @@ function ListCard(props) {
             updatedInfo["5"]=temp
 
             let newUserData= await api.updateUser(email, updatedInfo)
-            auth.user=newUserData.data.user    
-            store.loadIdNamePairs()
+            store.loadIdNamePairs(selectedIcon)
         }
         else{
             console.log("dislike failed")
@@ -166,6 +184,24 @@ function ListCard(props) {
             }
 
             updatedInfo["1"]=temp
+
+            if(response[0].user.publishedDate[response[1].listNumber]!="unpublished"){//needs to update the published list as well
+                let top5List=[]
+                top5List["3"]=temp[response[1].listNumber]
+
+                top5List["0"]=response[0].user.items[response[1].listNumber][1] //name
+                top5List["1"]=(response[0].user.items[response[1].listNumber]).splice(2,7) //items
+                temp=response[0].user.author
+                top5List["2"]=temp[response[1].listNumber]
+                temp= response[0].user.publishedDate
+                top5List["5"]=temp[response[1].listNumber]
+                temp= response[0].user.views
+                top5List["6"]=temp[response[1].listNumber]
+                temp= response[0].user.comments
+                top5List["4"]=temp[response[1].listNumber]
+                api.updatePublishedTop5ListById(response[0].user.items[response[1].listNumber][0],top5List)
+            }
+
             updatedInfo["0"]=response[0].user.items
             temp=response[0].user.author
             updatedInfo["2"]=temp
@@ -177,8 +213,7 @@ function ListCard(props) {
             updatedInfo["5"]=temp
 
             let newUserData= await api.updateUser(email, updatedInfo)
-            auth.user=newUserData.data.user    
-            store.loadIdNamePairs()
+            store.loadIdNamePairs(selectedIcon)
         }
         else{
             console.log("like failed")
@@ -187,6 +222,17 @@ function ListCard(props) {
 
     let comment=""
     let commentId=""
+    let selectedIcon="HomeIcon"
+
+    if(document.getElementById("GroupsIcon")&& document.getElementById("GroupsIcon").selected){
+        selectedIcon="GroupsIcon"
+    }
+    if(document.getElementById("PersonIcon")&& document.getElementById("PersonIcon").selected){
+        selectedIcon="PersonIcon"
+    }
+    if(document.getElementById("FunctionIcon") && document.getElementById("FunctionIcon").selected){
+        selectedIcon="FunctionIcon"
+    }
 
     //mostly copy pasted from the dislike as well...
     async function handleView(event){
@@ -213,13 +259,33 @@ function ListCard(props) {
             temp= response[0].user.views
 
             temp[response[1].listNumber]+=1
-
             updatedInfo["4"]=temp
+
+            if(response[0].user.publishedDate[response[1].listNumber]!="unpublished"){//needs to update the published list as well
+                let top5List=[]
+
+                top5List["6"]=temp[response[1].listNumber]
+                top5List["0"]=response[0].user.items[response[1].listNumber][1] //name
+                top5List["1"]=(response[0].user.items[response[1].listNumber]).splice(2,7) //items
+                temp=response[0].user.author
+                top5List["2"]=temp[response[1].listNumber]
+                temp= response[0].user.publishedDate
+                top5List["5"]=temp[response[1].listNumber]
+                temp= response[0].user.likes
+                top5List["3"]=temp[response[1].listNumber]
+                temp= response[0].user.comments
+                top5List["4"]=temp[response[1].listNumber]
+                api.updatePublishedTop5ListById(response[0].user.items[response[1].listNumber][0],top5List)
+            }
+
             temp= response[0].user.comments
             updatedInfo["5"]=temp
 
+            
+
             let newUserData= await api.updateUser(email, updatedInfo)
-            auth.user=newUserData.data.user 
+            
+            //auth.user=newUserData.data.user //really bad lmao
 
             toggleEdit() //needed to show list
             
@@ -265,7 +331,7 @@ function ListCard(props) {
                 let newUserData= await api.updateUser(email, updatedInfo)
                 auth.user=newUserData.data.user  
 
-                store.loadIdNamePairs()
+                store.loadIdNamePairs(selectedIcon)
 
             }else{
                 console.log("handleComment failed")
@@ -275,7 +341,7 @@ function ListCard(props) {
 
     let deleteButton=<div></div>
     console.log()
-    if (document.getElementById("HomeIcon").selected==true){//need fix here ->>happens only when in home screen
+    if (document.getElementById("HomeIcon") && document.getElementById("HomeIcon").selected==true){//need fix here ->>happens only when in home screen
         deleteButton= 
         <Box sx={{ p: 1 ,float:"right", marginRight:"5%", marginBottom:"60%"}}>
         <ResponsiveDialog>  </ResponsiveDialog> 

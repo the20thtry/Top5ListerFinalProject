@@ -3,7 +3,6 @@ var mongoose = require('mongoose');
 
 createTop5List = (req, res) => {
     const body = req.body;
-    console.log("body is: " + body)
     console.log("creating new top5list, its body is: " + body)
     if (!body) {
         return res.status(400).json({
@@ -20,7 +19,7 @@ createTop5List = (req, res) => {
    //if(body._id && body._id.length>=12 && !mongoose.isValidObjectId(body._id)){
    //     console.log("allah3 + " +  body._id)
         top5List._id= mongoose.Types.ObjectId(body._id);
- //   }
+    //}
 
     console.log("creating top5List: " + JSON.stringify(top5List));
     if (!top5List) {

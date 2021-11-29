@@ -29,7 +29,7 @@ export default function RegisterScreen() {
             email: formData.get('email'),
             password: formData.get('password'),
             passwordVerify: formData.get('passwordVerify'),
-            items:[["0","Untitled","Item1","Item2","Item3","Item4","Item5"]] //id, list name, list elements
+            //items:[["0","Untitled","Item1","Item2","Item3","Item4","Item5"]] //id, list name, list elements
         }, store);
 
         

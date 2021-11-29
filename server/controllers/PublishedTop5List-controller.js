@@ -2,7 +2,6 @@ const PublishedTop5List = require('../models/publishedTop5List-model');
 
 createTop5List = (req, res) => {
     const body = req.body;
-    console.log("body is: " + body)
     console.log("creating new top5list, its body is: " + body)
     if (!body) {
         return res.status(400).json({
@@ -37,6 +36,8 @@ createTop5List = (req, res) => {
 
 updateTop5List = async (req, res) => {
     const body = req.body
+    console.log("allah8")
+
     console.log("updateTop5List: " + JSON.stringify(body));
     if (!body) {
         return res.status(400).json({
@@ -54,13 +55,14 @@ updateTop5List = async (req, res) => {
             })
         }
 
-        top5List.name = body.name
-        top5List.items = body.items
-        top5List.author=body.author
-        top5List.likes=body.likes
-        top5List.comments=body.comments
-        top5List.publishedDate=body.publishedDate
-        top5List.views=body.views
+
+        top5List.name = body["0"]
+        top5List.items = body["1"]
+        top5List.author=body["2"]
+        top5List.likes=body["3"]
+        top5List.comments=body["4"]
+        top5List.publishedDate=body["5"]
+        top5List.views=body["6"]
 
         top5List
             .save()
