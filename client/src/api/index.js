@@ -47,6 +47,8 @@ export const getAllCommunityTop5List = () => api.get(`/communityTop5Lists/`)
 export const deleteCommunityTop5ListById = (id) => api.delete(`/communityTop5Lists/${id}`)
 export const updateCommunityTop5ListById = (id, payload) => api.put(`/communityTop5Lists/${id}`, payload)
 export const getCommunityTop5ListPairs = () => api.get(`/communityTop5Lists/`)
+export const getCommunityTop5ListById = (id) => api.get(`/communityTop5Lists/${id}`)
+
 
 
 const apis = {
@@ -74,7 +76,8 @@ const apis = {
     getAllCommunityTop5List,
     deleteCommunityTop5ListById,
     updateCommunityTop5ListById,
-    getCommunityTop5ListPairs
+    getCommunityTop5ListPairs,
+    getCommunityTop5ListById
 }
 
 export default apis

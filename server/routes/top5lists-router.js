@@ -32,6 +32,8 @@ router.get('/communityTop5Lists', communityTop5ListsController.getTop5Lists)
 router.delete('/communityTop5Lists/:id', auth.verify, communityTop5ListsController.deleteTop5List)
 router.put('/communityTop5Lists/:id', communityTop5ListsController.updateTop5List)
 router.get('/communityTop5Lists', communityTop5ListsController.getTop5ListPairs)
+router.get('/communityTop5Lists/:id', communityTop5ListsController.getTop5ListById)
+
 
 
 

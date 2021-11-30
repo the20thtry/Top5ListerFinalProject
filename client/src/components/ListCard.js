@@ -288,7 +288,15 @@ function ListCard(props) {
                 top5List["4"]=temp[response[1].listNumber]
                 await api.updatePublishedTop5ListById(response[0].user.items[response[1].listNumber][0],top5List)
             }
-            
+
+            //idk wtf i wrote earlier but new code time!
+            if(store.idNamePairs && store.idNamePairs[0] && store.idNamePairs[0].votes){ //check if lists have votes, if yes, then its a community list
+                let communityList= (await api.getCommunityTop5ListById(id)).data.top5List
+                communityList.views+=1
+                let response = await api.updateCommunityTop5ListById(id,communityList)
+                console.log(response)
+            }
+
 
             let newUserData= await api.updateUser(email, updatedInfo)
             

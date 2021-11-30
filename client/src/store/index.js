@@ -321,7 +321,6 @@ function GlobalStoreContextProvider(props) {
                 communityList[i].items=tempList
                 communityList[i].votes=votes
             }
-            console.log(communityList)
 
             let actualCommunityList=(await api.getCommunityTop5ListPairs()).data.data
             for(let i=0;i<actualCommunityList.length;i++){//update all community lists with the new votes and item order
@@ -330,7 +329,6 @@ function GlobalStoreContextProvider(props) {
                     if(tempTop5List.name==communityList[j].name){//found match
                         tempTop5List.items=communityList[j].items
                         tempTop5List.votes=communityList[j].votes
-                        tempTop5List.views="69420"
                         await api.updateCommunityTop5ListById(tempTop5List._id,tempTop5List)
                     }
                 }
@@ -513,6 +511,7 @@ function GlobalStoreContextProvider(props) {
     // THIS FUNCTION LOADS ALL THE ID, NAME PAIRS SO WE CAN LIST ALL THE LISTS
     store.loadIdNamePairs = async function (searchCategory="HomeIcon", searchValue=0, searchText="") {
         searchCategory=store.getSelectedIcon()
+        searchValue=store.getSearchValue()
         store.updatePublishedLists()
         console.log("loading idnamepairs, search Category is: " + searchCategory)
             if(auth.user){
