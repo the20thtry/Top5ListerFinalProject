@@ -16,6 +16,7 @@ function Statusbar() {
     const { store } = useContext(GlobalStoreContext);
     let text ="";
     function handleCreateNewList() {
+        if(auth.user && auth.user.email!="Guest-reserved-email")
         store.createNewList();
     }
     if (auth.loggedIn){

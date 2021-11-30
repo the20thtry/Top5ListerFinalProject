@@ -1,10 +1,13 @@
 
-import * as React from 'react';
+import { useContext, useState } from 'react'
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import { purple } from '@mui/material/colors';
 import { Link } from 'react-router-dom'
+import { GlobalStoreContext } from '../store'
+import AuthContext from '../auth'
+
 
 
 const BootstrapButton = styled(Button)({
@@ -59,6 +62,24 @@ const ColorButton = styled(Button)(({ theme }) => ({
 }));
 
 export default function SplashScreen() {
+  const { auth } = useContext(AuthContext);
+  const { store } = useContext(GlobalStoreContext);
+  async function continueAsGuest(){
+
+        auth.logIn({
+          email: "Guest-reserved-email",
+          password: "guest-password"
+        }, store)
+        let newUser =  await auth.registerUser({
+          firstName: "Guest",
+          lastName: " ",
+          email: "Guest-reserved-email",
+          password: "guest-password",
+          passwordVerify: "guest-password",
+      }, store);
+      auth.user=newUser
+    }
+
     return (
         <div id="splash-screen">
             <div style={{height:'12%'} }>
@@ -81,7 +102,7 @@ export default function SplashScreen() {
       </Link>
 
         <Link to='/register/' style={{textDecoration:'none'}}>
-      <BootstrapButton variant="contained" disableRipple>
+      <BootstrapButton variant="contained" disableRipple onClick={continueAsGuest}>
       <h1 style={{ color: '#00B4FF', fontSize:40} }>
           Continue as Guest(WIP) </h1> 
       </BootstrapButton>

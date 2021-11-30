@@ -22,12 +22,12 @@ import { Typography } from '@mui/material';
     @author McKilla Gorilla
 */
 function ListCard(props) {
+    const { auth } = useContext(AuthContext);
     const { store } = useContext(GlobalStoreContext);
     const [editActive, setEditActive] = useState(false);
     const [viewActive, setViewActive] = useState(false);
     const [text, setText] = useState("");
      let { idNamePair } = props;
-    const { auth } = useContext(AuthContext);
 
     function handleLoadList(event, id) {
         if (!event.target.disabled) {
@@ -74,6 +74,8 @@ function ListCard(props) {
     }
 
     async function dislike(event){
+        if(auth.user.email=="Guest-reserved-email")
+            return
         event.stopPropagation()
         //copy pasted from deleteModal
         let theListItself=event.target.parentElement.parentElement.parentElement.parentElement
@@ -173,6 +175,8 @@ function ListCard(props) {
     //LITERALLY COPY PASTED FROM DISLIKE FUNCTION, THEN SWAPPED THEM,
     //reminder :listNumber[1] -> listNumber[0]
     async function like(event){
+        if(auth.user.email=="Guest-reserved-email")
+            return
         event.stopPropagation()
         //copy pasted from deleteModal
         let theListItself=event.target.parentElement.parentElement.parentElement.parentElement
@@ -368,6 +372,8 @@ function ListCard(props) {
     }
 
     async function handleComment(event){
+        if(auth.user.email=="Guest-reserved-email")
+            return
         if(event.key=="Enter"){
             console.log(commentId)
             let response= await store.getUserTop5ListById(commentId)
