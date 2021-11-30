@@ -412,6 +412,19 @@ function ListCard(props) {
         }
     }
 
+    function getAuthorOrViews(){
+        if(idNamePair.votes){
+            let sum=0
+            for(let i=0;i<5;i++){
+                sum+=idNamePair.votes[i]
+            }
+
+            return "Total Votes: "+ sum
+        }else{
+            return "By: " +idNamePair.author
+        }
+    }
+
     function getVotesForCommunityLists(i){
         if(idNamePair.votes){
             return idNamePair.votes[i]
@@ -506,9 +519,10 @@ function ListCard(props) {
             }}
         >   <div >
                 <Box sx={{ p: 1, flexGrow: 0, mt: 1, fontSize:16 }}>
-                    {idNamePair.name} 
+                    <Typography variant="h3">{idNamePair.name} </Typography>
                     <br />
-                    By: {idNamePair.author}
+                    <Typography color="blue" id="underline"> {getAuthorOrViews()} </Typography>
+                   
                     <br/>
                     {viewingBlock}
 

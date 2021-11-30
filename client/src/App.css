@@ -30,6 +30,9 @@ body {
   top: 5%;
 }
 
+#underline span {
+  text-decoration: underline;
+}
 
 #app-root {
   position: absolute;
