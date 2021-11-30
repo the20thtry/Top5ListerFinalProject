@@ -35,6 +35,7 @@ export const loginUser = (payload) => api.post(`/login/`, payload)
 export const logoutUser = () => api.get(`/logout/`)
 export const updateUser = (email,payload) => api.put(`/user/${email}`,payload)
 export const getAllUserTop5Lists = () => api.get(`/user`)
+export const getUserById = (id) => api.get(`/user/${id}`)
 
 export const publishTop5List = (payload) => api.post(`/publishedTop5Lists/`, payload)
 export const getAllPublishedTop5List = () => api.get(`/publishedTop5Lists/`)
@@ -65,6 +66,7 @@ const apis = {
     logoutUser,
     updateUser,
     getAllUserTop5Lists,
+    getUserById,
 
     publishTop5List,
     getAllPublishedTop5List,

@@ -120,26 +120,9 @@ function ListCard(props) {
 
             updatedInfo["1"]=temp
 
-            if(response[0].user.publishedDate[response[1].listNumber]!="unpublished"){//needs to update the published list as well
-                let top5List=[]
-                top5List["3"]=temp[response[1].listNumber]
-                top5List["0"]=response[0].user.items[response[1].listNumber][1] //name
-                top5List["1"]=response[0].user.items[response[1].listNumber].slice(2,7) //items
-                temp=response[0].user.author
-                top5List["2"]=temp[response[1].listNumber]
-                temp= response[0].user.publishedDate
-                top5List["5"]=temp[response[1].listNumber]
-                temp= response[0].user.views
-                top5List["6"]=temp[response[1].listNumber]
-                temp= response[0].user.comments
-                top5List["4"]=temp[response[1].listNumber]
-                await api.updatePublishedTop5ListById(response[0].user.items[response[1].listNumber][0],top5List)
-            }
-
             //stuffs for community lists
             if(store.idNamePairs && store.idNamePairs[0] && store.idNamePairs[0].votes){ //check if lists have votes, if yes, then its a community list
                 let communityList= (await api.getCommunityTop5ListById(id)).data.top5List
-                communityList.likes[0]=likesArray
                 let dislike=true
                 for(let i=0;i<communityList.likes[1].length;i++){//check if user already disliked
                     if(communityList.likes[1][i]==auth.user._id){
@@ -148,15 +131,38 @@ function ListCard(props) {
                 }
                 if(dislike){
                     communityList.likes[1].push(auth.user._id)
+                    const index =  communityList.likes[0].indexOf(auth.user._id);
+                    if (index > -1) {
+                    communityList.likes[0].splice(index, 1);
+                    }
                 }
                 
                 await api.updateCommunityTop5ListById(id,communityList)
+            }else{ //old stuffs
+                if(response[0].user.publishedDate[response[1].listNumber]!="unpublished"){//needs to update the published list as well
+                    let top5List=[]
+                    top5List["3"]=temp[response[1].listNumber]
+                    top5List["0"]=response[0].user.items[response[1].listNumber][1] //name
+                    top5List["1"]=response[0].user.items[response[1].listNumber].slice(2,7) //items
+                    temp=response[0].user.author
+                    top5List["2"]=temp[response[1].listNumber]
+                    temp= response[0].user.publishedDate
+                    top5List["5"]=temp[response[1].listNumber]
+                    temp= response[0].user.views
+                    top5List["6"]=temp[response[1].listNumber]
+                    temp= response[0].user.comments
+                    top5List["4"]=temp[response[1].listNumber]
+                    await api.updatePublishedTop5ListById(response[0].user.items[response[1].listNumber][0],top5List)
+                }
+    
+    
+    
+                let newUserData= await api.updateUser(email, updatedInfo)
+                auth.user=(await api.getUserById(auth.user._id)).data.user
+
             }
 
-            let newUserData= await api.updateUser(email, updatedInfo)
-            if(document.getElementById("HomeIcon").selected==true){
-                store.saveTempListToUser()
-            }
+
             store.loadIdNamePairs(selectedIcon)
         }
         else{
@@ -212,43 +218,49 @@ function ListCard(props) {
             }
 
             updatedInfo["1"]=temp
-
-            if(response[0].user.publishedDate[response[1].listNumber]!="unpublished"){//needs to update the published list as well
-                let top5List=[]
-                top5List["3"]=temp[response[1].listNumber]
-
-                top5List["0"]=response[0].user.items[response[1].listNumber][1] //name
-                top5List["1"]=(response[0].user.items[response[1].listNumber]).slice(2) //items
-                temp=response[0].user.author
-                top5List["2"]=temp[response[1].listNumber]
-                temp= response[0].user.publishedDate
-                top5List["5"]=temp[response[1].listNumber]
-                temp= response[0].user.views
-                top5List["6"]=temp[response[1].listNumber]
-                temp= response[0].user.comments
-                top5List["4"]=temp[response[1].listNumber]
-                await api.updatePublishedTop5ListById(response[0].user.items[response[1].listNumber][0],top5List)
-            }
-
             //stuffs for community lists copied from dislike
             if(store.idNamePairs && store.idNamePairs[0] && store.idNamePairs[0].votes){ //check if lists have votes, if yes, then its a community list
                 let communityList= (await api.getCommunityTop5ListById(id)).data.top5List
-                communityList.likes[1]=dislikesArray
                 let like=true
                 for(let i=0;i<communityList.likes[0].length;i++){//check if user already liked
                     if(communityList.likes[0][i]==auth.user._id){
                         like=false
                     }
                 }
-                if(like){
+                if(like){ //has to undislike when liked
                     communityList.likes[0].push(auth.user._id)
+                    const index =  communityList.likes[1].indexOf(auth.user._id);
+                    if (index > -1) {
+                    communityList.likes[1].splice(index, 1);
+                    }
                 }
-                
                 await api.updateCommunityTop5ListById(id,communityList)
             }
+            else{
+                if(response[0].user.publishedDate[response[1].listNumber]!="unpublished"){//needs to update the published list as well
+                    let top5List=[]
+                    top5List["3"]=temp[response[1].listNumber]
+    
+                    top5List["0"]=response[0].user.items[response[1].listNumber][1] //name
+                    top5List["1"]=(response[0].user.items[response[1].listNumber]).slice(2) //items
+                    temp=response[0].user.author
+                    top5List["2"]=temp[response[1].listNumber]
+                    temp= response[0].user.publishedDate
+                    top5List["5"]=temp[response[1].listNumber]
+                    temp= response[0].user.views
+                    top5List["6"]=temp[response[1].listNumber]
+                    temp= response[0].user.comments
+                    top5List["4"]=temp[response[1].listNumber]
+                    await api.updatePublishedTop5ListById(response[0].user.items[response[1].listNumber][0],top5List)
+                }
+    
+    
+    
+                let newUserData= await api.updateUser(email, updatedInfo)
+                auth.user=(await api.getUserById(auth.user._id)).data.user
 
+            }
 
-            let newUserData= await api.updateUser(email, updatedInfo)
             store.loadIdNamePairs(selectedIcon)
         }
         else{
@@ -329,6 +341,7 @@ function ListCard(props) {
     
     
                 let newUserData= await api.updateUser(email, updatedInfo)
+                auth.user=(await api.getUserById(auth.user._id)).data.user
                 
                 //auth.user=newUserData.data.user //really bad lmao
 
@@ -376,10 +389,15 @@ function ListCard(props) {
                 temp[response[1].listNumber].push(comment)
 
                 updatedInfo["5"]=temp
+                if(store.idNamePairs && store.idNamePairs[0] && store.idNamePairs[0].votes){ //check if lists have votes, if yes, then its a community list
+                    let communityList= (await api.getCommunityTop5ListById(commentId)).data.top5List
+                    communityList.comments.push(comment)
+                    await api.updateCommunityTop5ListById(commentId,communityList)
+                }else{
+                    let newUserData= await api.updateUser(email, updatedInfo)
+                    auth.user=(await api.getUserById(auth.user._id)).data.user
+                }
 
-
-    
-                let newUserData= await api.updateUser(email, updatedInfo)
                 store.loadIdNamePairs(selectedIcon)
 
             }else{

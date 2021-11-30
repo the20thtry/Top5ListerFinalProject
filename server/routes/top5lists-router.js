@@ -20,6 +20,8 @@ router.post('/login', UserController.login)
 router.get(`/logout/`, UserController.getLoggedOut)
 router.put('/user/:id', auth.verify, UserController.updateUser)
 router.get('/user', UserController.getAllUserTop5Lists)
+router.get('/user/:id',UserController.getUserById)
+
 
 router.post('/publishedTop5Lists',auth.verify, PublishedTop5ListController.createTop5List)
 router.get('/publishedTop5Lists', PublishedTop5ListController.getTop5Lists)

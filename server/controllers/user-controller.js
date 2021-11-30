@@ -72,7 +72,7 @@ getAllUserTop5Lists =async (req, res) =>{
             }
             return res.status(200).json({ success: true, data: top5Lists })
         }).catch(err => console.log(err))
-    }
+}
 
 
 getLoggedIn = async (req, res) => {
@@ -241,11 +241,21 @@ registerUser = async (req, res) => {
     }
 }
 
+getUserById = async (req, res) => {
+    await User.findById({ _id: req.params.id }, (err, list) => {
+        if (err) {
+            return res.status(400).json({ success: false, error: err });
+        }
+        return res.status(200).json({ success: true, user: list })
+    }).catch(err => console.log(err))
+}
+
 module.exports = {
     getLoggedIn,
     registerUser,
     login,
     getLoggedOut,
     updateUser,
-    getAllUserTop5Lists
+    getAllUserTop5Lists,
+    getUserById
 }

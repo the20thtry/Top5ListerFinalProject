@@ -511,7 +511,6 @@ function GlobalStoreContextProvider(props) {
     // THIS FUNCTION LOADS ALL THE ID, NAME PAIRS SO WE CAN LIST ALL THE LISTS
     store.loadIdNamePairs = async function (searchCategory="HomeIcon", searchValue=0, searchText="") {
         searchCategory=store.getSelectedIcon()
-        searchValue=store.getSearchValue()
         store.updatePublishedLists()
         console.log("loading idnamepairs, search Category is: " + searchCategory)
             if(auth.user){
