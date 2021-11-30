@@ -43,8 +43,8 @@ function WorkspaceScreen() {
             await store.changeListName(currentList._id, listName,formattedDate)
             await store.saveTempListToUser()
             await store.publishList(currentList._id)
+            await store.createTop5CommunityListById(currentList._id)
             store.closeCurrentList()
-
         }
         catch{
             store.closeCurrentList()
@@ -85,7 +85,14 @@ function WorkspaceScreen() {
             </List>;
     }
 
+    //finds if current list is valid to publish
     function currentListValid(currentList){
+        let listName=currentList.name
+        for(let i=0;i<store.idNamePairs.length;i++){
+            if(store.idNamePairs[i].publishedDate!="unpublished" && store.idNamePairs[i].name==listName){ //cant publish two list of same name
+                return false
+            }
+        }
         let items=currentList.items
         for(let i =0;i<5;i++){
             for(let j=i+1;j<5;j++){

@@ -274,6 +274,74 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+    //THIS IS GOING TO RETURN THE IDNAMEPAIRS OF THE PROPER COMMUNITY LIST
+    //TAKES ALL THE PUBLISHED LISTS AND COMPILE THEM INTO THE COMMUNITY LISTS
+    store.createTop5CommunityListIdPairs = async function (){
+        let response = await api.getPublishedTop5ListPairs()
+        if(response){
+            let AllPublishedLists= (response.data.data)
+            let communityList=[]
+            let newList=true
+            for(let i=0;i<AllPublishedLists.length;i++){
+                for(let j=0;j<communityList.length;j++){//check for repeats
+                    if(communityList[j].name==AllPublishedLists[i].name){
+                        //two same name lists, just add the items to the first list that was already there
+                        newList=false
+                        for(let k=0;k<5;k++){
+                           communityList[j].items.push(AllPublishedLists[i].items[k])
+                        }
+                    }
+                }
+                if(newList){
+                    communityList.push(AllPublishedLists[i])
+                }
+            }
+            for(let i=0;i<communityList.length;i++){//loops over every list
+                let hashtable={}
+                for(let j=0;j<communityList[i].items.length;j++){//loop over every item in the list
+                    if(!Object.keys(hashtable).includes(communityList[i].items[j])){
+                        hashtable[communityList[i].items[j]]= (5-j%5)
+                        //we added the items in order, so every 5 items is a new list, first item is worth most
+                    }else{
+                        let newValue=(hashtable[communityList[i].items[j]]+(5-j%5))
+                        hashtable[communityList[i].items[j]]=newValue //if already in list, add the value
+                    }
+                }
+                var keys = Object.keys(hashtable);
+                keys=keys.sort(function(a, b) {
+                    return hashtable[b] - hashtable[a]
+                });
+                
+                let tempList=[]
+                let votes=[]
+                for(let i=0;i<5;i++){
+                    tempList.push(keys[i])
+                    votes.push(hashtable[keys[i]])
+                }
+                communityList[i].items=tempList
+                communityList[i].votes=votes
+            }
+            console.log(communityList)
+
+            let actualCommunityList=(await api.getCommunityTop5ListPairs()).data.data
+            for(let i=0;i<actualCommunityList.length;i++){//update all community lists with the new votes and item order
+                let tempTop5List=actualCommunityList[i]
+                for(let j=0;j<communityList.length;j++){//find the matching new/old community lists by name
+                    if(tempTop5List.name==communityList[j].name){//found match
+                        tempTop5List.items=communityList[j].items
+                        tempTop5List.votes=communityList[j].votes
+                        tempTop5List.views="69420"
+                        await api.updateCommunityTop5ListById(tempTop5List._id,tempTop5List)
+                    }
+                }
+
+            }
+            let updatedCommunityIdNamePairs=(await api.getCommunityTop5ListPairs()).data.data
+
+            return updatedCommunityIdNamePairs
+        }
+    }
+
     store.getUserTop5ListById = async function (id){
         let response= await store.getAllUserTop5Lists()
         if (response){
@@ -299,7 +367,7 @@ function GlobalStoreContextProvider(props) {
         let top5list= (await api.getTop5ListById(id)).data.top5List
         top5list["email"]=auth.user.email
         console.log(top5list)
-        api.publishTop5List(top5list)
+        await api.publishTop5List(top5list)
     }
 
     // THESE ARE THE FUNCTIONS THAT WILL UPDATE OUR STORE AND
@@ -441,47 +509,10 @@ function GlobalStoreContextProvider(props) {
     function getMonthFromString(mon){
         return new Date(Date.parse(mon +" 1, 2012")).getMonth()+1
      }
-    function tallyVotes(idNamePairs){
-        let communityList=[]
-        for(let i=0;i<idNamePairs.length;i++){
-            let items=[]
-            let newElement=-1
-            for(let j=0;j<communityList.length;j++){
-                if(communityList[j].name==idNamePairs[i].name){//same list, add votes to items/add new items
-                    newElement=j
-                }
-            }
-            if(newElement==-1){
-                communityList.push(idNamePairs[i])
-                for(let k=0;k<4;k++){
-                    let itemEntry=idNamePairs[i].items[k]
-                    console.log("pushing more: "+ itemEntry)
-                    items[itemEntry]=(5-k)
-                    console.log(items.length)
-                }
-                communityList[communityList.length-1]["votes"]=items
-            }
-            else{
-                for(let k=0;k<5;k++){
-                    let itemEntry=communityList[newElement].items[k]
-                    console.log(itemEntry)
-                    if(items[itemEntry]){
-                        items[itemEntry]+=(5-k)
-                    }else{
-                        items[itemEntry]=(5-k)  
-                    }
-                }
-                communityList[newElement]["votes"]=items
-            }
-            for(let j=0;j<idNamePairs.length;j++){
-
-            }
-        }
-        return communityList
-    }
 
     // THIS FUNCTION LOADS ALL THE ID, NAME PAIRS SO WE CAN LIST ALL THE LISTS
     store.loadIdNamePairs = async function (searchCategory="HomeIcon", searchValue=0, searchText="") {
+        searchCategory=store.getSelectedIcon()
         store.updatePublishedLists()
         console.log("loading idnamepairs, search Category is: " + searchCategory)
             if(auth.user){
@@ -489,13 +520,16 @@ function GlobalStoreContextProvider(props) {
                     if(searchCategory=="HomeIcon"){
                         await store.updateTempTop5Lists()
                     }
-                    else if(searchCategory=="GroupsIcon" || searchCategory=="PersonIcon" || searchCategory=="FunctionsIcon"){
+                    else if(searchCategory=="GroupsIcon" || searchCategory=="PersonIcon"){
                         const response1 = await api.getPublishedTop5ListPairs();
                         await store.updateTempTop5Lists(response1.data.data)
                     }
                     const response = await api.getTop5ListPairs();
                     if (response.data.success) {
                         let pairsArray = response.data.idNamePairs;
+                        if( searchCategory=="FunctionsIcon"){
+                            pairsArray=await store.createTop5CommunityListIdPairs()
+                        }
                         if(searchValue==1 || searchValue==2 ){
                             pairsArray=pairsArray.sort(function(a, b){
                                 a=a["publishedDate"].split(" ")
@@ -549,9 +583,6 @@ function GlobalStoreContextProvider(props) {
                             pairsArray =(pairsArray.filter(x => x["name"].startsWith(searchText)))
                         if(searchCategory=="PersonIcon")
                             pairsArray =(pairsArray.filter(x => x["author"].startsWith(searchText)))
-                        if(searchCategory=="FunctionsIcon"){
-                            console.log(tallyVotes(pairsArray))
-                        }
 
                         storeReducer({
                             type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
@@ -566,6 +597,21 @@ function GlobalStoreContextProvider(props) {
             else {
                 console.log("API FAILED TO GET THE LIST PAIRS");
             }
+    }
+
+    store.createTop5CommunityListById = async function (id){ //called when a new list is published
+        let top5list= (await api.getTop5ListById(id)).data.top5List
+        top5list["email"]=auth.user.email
+        top5list["votes"]=[5,4,3,2,1]
+        let response = await api.getAllCommunityTop5List()
+        if(response){ //check if the list is already a community list
+            let communityLists=response.data.data
+            for(let i=0;i<communityLists.length;i++){
+                if(communityLists[i].name==top5list["name"])
+                    return;
+            }
+            await api.createCommunityTop5List(top5list)
+        }
     }
 
     // THE FOLLOWING 5 FUNCTIONS ARE FOR COORDINATING THE DELETION

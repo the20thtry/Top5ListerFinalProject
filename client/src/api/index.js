@@ -68,7 +68,13 @@ const apis = {
     getAllPublishedTop5List,
     deletePublishedTop5ListById,
     updatePublishedTop5ListById,
-    getPublishedTop5ListPairs
+    getPublishedTop5ListPairs,
+
+    createCommunityTop5List,
+    getAllCommunityTop5List,
+    deleteCommunityTop5ListById,
+    updateCommunityTop5ListById,
+    getCommunityTop5ListPairs
 }
 
 export default apis

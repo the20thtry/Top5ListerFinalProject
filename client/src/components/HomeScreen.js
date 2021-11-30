@@ -69,6 +69,7 @@ const HomeScreen = () => {
             </List>;
     }
 
+    //makes the select value false for all icons execept the one selected
     function selectButton(event){
         let allIcons=document.getElementsByClassName(event.target.className)
         let iconSelected=event.target.id

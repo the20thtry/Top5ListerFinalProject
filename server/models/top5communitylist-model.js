@@ -11,7 +11,7 @@ const Top5CommunityListSchema = new Schema(
         publishedDate:{type:String,required:true},//date in string format(Jan 5, 2019)), if unpublushed=("unpublished")
         views:{type: Number,required:true}, //how many views the list has
         comments:{type:[String],required:true}, //all comments saved as strings 
-        votes:{type:[String],required:true}
+        votes:{type:[Number],required:true}
     },
     { timestamps: true },
 )

@@ -3,7 +3,7 @@ var mongoose = require('mongoose');
 
 createTop5List = (req, res) => {
     const body = req.body;
-    console.log("creating new top5list, its body is: " + body)
+    console.log("creating new top5communitylist, its body is: " + body)
     if (!body) {
         return res.status(400).json({
             success: false,
@@ -13,15 +13,16 @@ createTop5List = (req, res) => {
 
     const top5List = new Top5CommunityList(body);
     console.log(mongoose.isValidObjectId(body._id))
-    if(body._id && body._id.charAt(0)=="\""){
+    if(body._id.length>10 && body._id.charAt(0)=="\""){
         console.log(body._id=body._id.substring(1,body._id.length-1))
     }
    //if(body._id && body._id.length>=12 && !mongoose.isValidObjectId(body._id)){
-   //     console.log("allah3 + " +  body._id)
+    //    console.log("allah3 + " +  body._id)
+    //    console.log(body._id)
         top5List._id= mongoose.Types.ObjectId(body._id);
     //}
 
-    console.log("creating top5List: " + JSON.stringify(top5List));
+    console.log("creating top5communityList: " + JSON.stringify(top5List));
     if (!top5List) {
         return res.status(400).json({ success: false, error: err })
     }
@@ -70,8 +71,8 @@ updateTop5List = async (req, res) => {
         top5List.comments=body.comments
         top5List.publishedDate=body.publishedDate
         top5List.views=body.views
+        top5List.votes=body.votes
 
-        console.log("Allah10")
         console.log(top5List)
 
         top5List
