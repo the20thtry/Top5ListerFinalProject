@@ -329,10 +329,14 @@ function GlobalStoreContextProvider(props) {
                     if(tempTop5List.name==communityList[j].name){//found match
                         tempTop5List.items=communityList[j].items
                         tempTop5List.votes=communityList[j].votes
+                        var month = [ "January", "February", "March", "April", "May", "June",
+                        "July", "August", "September", "October", "November", "December" ];
+                        let date=(new Date())
+                        let formattedDate=month[(date.getUTCMonth())] + " " + date.getDate() + ", " +date.getFullYear()
+                        tempTop5List.publishedDate=formattedDate
                         await api.updateCommunityTop5ListById(tempTop5List._id,tempTop5List)
                     }
                 }
-
             }
             let updatedCommunityIdNamePairs=(await api.getCommunityTop5ListPairs()).data.data
 

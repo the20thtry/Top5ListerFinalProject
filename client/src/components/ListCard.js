@@ -412,6 +412,12 @@ function ListCard(props) {
         }
     }
 
+    function getVotesForCommunityLists(i){
+        if(idNamePair.votes){
+            return idNamePair.votes[i]
+        }
+    }
+
     let deleteButton=<div></div>
     console.log()
     if (document.getElementById("HomeIcon") && document.getElementById("HomeIcon").selected==true){//need fix here ->>happens only when in home screen
@@ -438,7 +444,13 @@ function ListCard(props) {
         <div style={{fontSize:'12pt'}}><Typography variant="h6" color="red" style={{fontSize:'12pt'}}>published:  {idNamePair.publishedDate}</Typography>
         </div>
         </Box>
-        //HEREH
+        if(idNamePair.votes){
+            editPublishButton= 
+            <Box sx={{ p: 1 }}>
+            <div style={{fontSize:'12pt'}}><Typography variant="h6" color="red" style={{fontSize:'12pt'}}>updated:  {idNamePair.publishedDate}</Typography>
+            </div>
+            </Box>
+        }
     }
 
     let viewingBlock=<div>  </div>
@@ -447,12 +459,17 @@ function ListCard(props) {
         showListButton=<ArrowUpwardIcon onClick={toggleEdit} style={{float:"left", marginLeft:"600px"}}></ArrowUpwardIcon>
         viewingBlock=
         <div style={{backgroundColor:{color1}, width:"750px",height:"300px"}}> 
-            <div style={{width:"45%", position:"absolute", height:"300px",fontSize:"48", contain:"strict",backgroundColor:"blue", borderRadius:"35px",overflowY:"scroll"}}>
-                <Typography variant="h3" color="yellow">1.{idNamePair.items[0]}</Typography>
-                <Typography variant="h3" color="yellow">2.{idNamePair.items[1]}</Typography>
-                <Typography variant="h3" color="yellow">3.{idNamePair.items[2]}</Typography>
-                <Typography variant="h3" color="yellow">4.{idNamePair.items[3]}</Typography>
-                <Typography variant="h3" color="yellow">5.{idNamePair.items[4]}</Typography>
+            <div style={{width:"45%", position:"absolute", height:"300px",fontSize:"48", contain:"strict",backgroundColor:"blue", borderRadius:"15px",overflowY:"scroll"}}>
+                <Typography variant="h4" color="yellow" fontSize="24px">1.{idNamePair.items[0]}</Typography>
+                <Typography variant="h6" color="yellow" fontSize="16px">(votes:{getVotesForCommunityLists(0)})</Typography>
+                <Typography variant="h4" color="yellow"fontSize="24px">2.{idNamePair.items[1]}</Typography>
+                <Typography variant="h6" color="yellow" fontSize="16px">(votes:{getVotesForCommunityLists(1)})</Typography>
+                <Typography variant="h4" color="yellow"fontSize="24px">3.{idNamePair.items[2]}</Typography>
+                <Typography variant="h6" color="yellow" fontSize="16px">(votes:{getVotesForCommunityLists(2)})</Typography>
+                <Typography variant="h4" color="yellow"fontSize="24px">4.{idNamePair.items[3]}</Typography>
+                <Typography variant="h6" color="yellow" fontSize="16px">(votes:{getVotesForCommunityLists(3)})</Typography>
+                <Typography variant="h4" color="yellow"fontSize="24px">5.{idNamePair.items[4]}</Typography>
+                <Typography variant="h6" color="yellow" fontSize="16px">(votes:{getVotesForCommunityLists(4)})</Typography>
             </div>
 
 
