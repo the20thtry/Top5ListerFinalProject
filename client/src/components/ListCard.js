@@ -427,7 +427,7 @@ function ListCard(props) {
 
     function getVotesForCommunityLists(i){
         if(idNamePair.votes){
-            return idNamePair.votes[i]
+            return "(votes: " + idNamePair.votes[i] +")"
         }
     }
 
@@ -474,15 +474,15 @@ function ListCard(props) {
         <div style={{backgroundColor:{color1}, width:"750px",height:"300px"}}> 
             <div style={{width:"45%", position:"absolute", height:"300px",fontSize:"48", contain:"strict",backgroundColor:"blue", borderRadius:"15px",overflowY:"scroll"}}>
                 <Typography variant="h4" color="yellow" fontSize="24px">1.{idNamePair.items[0]}</Typography>
-                <Typography variant="h6" color="yellow" fontSize="16px">(votes:{getVotesForCommunityLists(0)})</Typography>
+                <Typography variant="h6" color="yellow" fontSize="16px">{getVotesForCommunityLists(0)}</Typography>
                 <Typography variant="h4" color="yellow"fontSize="24px">2.{idNamePair.items[1]}</Typography>
-                <Typography variant="h6" color="yellow" fontSize="16px">(votes:{getVotesForCommunityLists(1)})</Typography>
+                <Typography variant="h6" color="yellow" fontSize="16px">{getVotesForCommunityLists(1)}</Typography>
                 <Typography variant="h4" color="yellow"fontSize="24px">3.{idNamePair.items[2]}</Typography>
-                <Typography variant="h6" color="yellow" fontSize="16px">(votes:{getVotesForCommunityLists(2)})</Typography>
+                <Typography variant="h6" color="yellow" fontSize="16px">{getVotesForCommunityLists(2)}</Typography>
                 <Typography variant="h4" color="yellow"fontSize="24px">4.{idNamePair.items[3]}</Typography>
-                <Typography variant="h6" color="yellow" fontSize="16px">(votes:{getVotesForCommunityLists(3)})</Typography>
+                <Typography variant="h6" color="yellow" fontSize="16px">{getVotesForCommunityLists(3)}</Typography>
                 <Typography variant="h4" color="yellow"fontSize="24px">5.{idNamePair.items[4]}</Typography>
-                <Typography variant="h6" color="yellow" fontSize="16px">(votes:{getVotesForCommunityLists(4)})</Typography>
+                <Typography variant="h6" color="yellow" fontSize="16px">{getVotesForCommunityLists(4)}</Typography>
             </div>
 
 

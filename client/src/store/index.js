@@ -612,6 +612,9 @@ function GlobalStoreContextProvider(props) {
                 if(communityLists[i].name==top5list["name"])
                     return;
             }
+            top5list["comments"]=[]
+            top5list["views"]=0
+            top5list["likes"]=[[],[]]
             await api.createCommunityTop5List(top5list)
         }
     }
