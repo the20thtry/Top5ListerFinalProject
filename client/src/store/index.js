@@ -581,10 +581,10 @@ function GlobalStoreContextProvider(props) {
                                 return a < b ? 1 : (a > b ? -1 : 0);     
                                 })
                         }
-                        if(searchCategory=="GroupsIcon")
-                            pairsArray =(pairsArray.filter(x => x["name"].startsWith(searchText)))
+                        if(searchCategory=="GroupsIcon" || searchCategory=="FunctionsIcon" || searchCategory=="HomeIcon")
+                            pairsArray =(pairsArray.filter(x => x["name"].toUpperCase().startsWith(searchText.toUpperCase())))
                         if(searchCategory=="PersonIcon")
-                            pairsArray =(pairsArray.filter(x => x["author"].startsWith(searchText)))
+                            pairsArray =(pairsArray.filter(x => x["author"].toUpperCase().startsWith(searchText.toUpperCase())))
 
                         storeReducer({
                             type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
