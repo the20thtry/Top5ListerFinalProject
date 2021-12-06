@@ -281,8 +281,8 @@ function GlobalStoreContextProvider(props) {
         if(response){
             let AllPublishedLists= (response.data.data)
             let communityList=[]
-            let newList=true
             for(let i=0;i<AllPublishedLists.length;i++){
+                let newList=true
                 for(let j=0;j<communityList.length;j++){//check for repeats
                     if(communityList[j].name==AllPublishedLists[i].name){
                         //two same name lists, just add the items to the first list that was already there
@@ -293,6 +293,7 @@ function GlobalStoreContextProvider(props) {
                     }
                 }
                 if(newList){
+                    console.log(AllPublishedLists[i])
                     communityList.push(AllPublishedLists[i])
                 }
             }
@@ -321,7 +322,7 @@ function GlobalStoreContextProvider(props) {
                 communityList[i].items=tempList
                 communityList[i].votes=votes
             }
-
+            console.log(communityList)
             let actualCommunityList=(await api.getCommunityTop5ListPairs()).data.data
             for(let i=0;i<actualCommunityList.length;i++){//update all community lists with the new votes and item order
                 let tempTop5List=actualCommunityList[i]
@@ -339,7 +340,6 @@ function GlobalStoreContextProvider(props) {
                 }
             }
             let updatedCommunityIdNamePairs=(await api.getCommunityTop5ListPairs()).data.data
-
             return updatedCommunityIdNamePairs
         }
     }
