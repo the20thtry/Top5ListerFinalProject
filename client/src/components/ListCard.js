@@ -168,6 +168,24 @@ function ListCard(props) {
             store.loadIdNamePairs(selectedIcon)
         }
         else{
+            if(store.idNamePairs && store.idNamePairs[0] && store.idNamePairs[0].votes){ //check if lists have votes, if yes, then its a community list
+                let communityList= (await api.getCommunityTop5ListById(id)).data.top5List
+                let dislike=true
+                for(let i=0;i<communityList.likes[1].length;i++){//check if user already disliked
+                    if(communityList.likes[1][i]==auth.user._id){
+                        dislike=false
+                    }
+                }
+                if(dislike){
+                    communityList.likes[1].push(auth.user._id)
+                    const index =  communityList.likes[0].indexOf(auth.user._id);
+                    if (index > -1) {
+                    communityList.likes[0].splice(index, 1);
+                    }
+                }
+                
+                await api.updateCommunityTop5ListById(id,communityList)
+            }
             console.log("dislike failed")
         }
     }
@@ -268,6 +286,23 @@ function ListCard(props) {
             store.loadIdNamePairs(selectedIcon)
         }
         else{
+            if(store.idNamePairs && store.idNamePairs[0] && store.idNamePairs[0].votes){ //check if lists have votes, if yes, then its a community list
+                let communityList= (await api.getCommunityTop5ListById(id)).data.top5List
+                let like=true
+                for(let i=0;i<communityList.likes[0].length;i++){//check if user already liked
+                    if(communityList.likes[0][i]==auth.user._id){
+                        like=false
+                    }
+                }
+                if(like){ //has to undislike when liked
+                    communityList.likes[0].push(auth.user._id)
+                    const index =  communityList.likes[1].indexOf(auth.user._id);
+                    if (index > -1) {
+                    communityList.likes[1].splice(index, 1);
+                    }
+                }
+                await api.updateCommunityTop5ListById(id,communityList)
+            }
             console.log("like failed")
         }
     }
@@ -324,7 +359,6 @@ function ListCard(props) {
                 await api.updateCommunityTop5ListById(id,communityList)
             }
             else{
-
                 if(response[0].user.publishedDate[response[1].listNumber]!="unpublished"){//needs to update the published list as well
                     let top5List=[]
     
@@ -350,18 +384,21 @@ function ListCard(props) {
                 //auth.user=newUserData.data.user //really bad lmao
 
             }
-
-
-
-            toggleEdit() //needed to show list
             
-
+            toggleEdit() //needed to show list
             //might cause issues/bugs
             //store.loadIdNamePairs(selectedIcon)
             //store.setViewActive()
 
         }
         else{
+            if(store.idNamePairs && store.idNamePairs[0] && store.idNamePairs[0].votes){ //check if lists have votes, if yes, then its a community list
+                let communityList= (await api.getCommunityTop5ListById(id)).data.top5List
+                console.log(communityList.views)
+                communityList.views+=1
+                await api.updateCommunityTop5ListById(id,communityList)
+            }
+            toggleEdit() //needed to show list
             console.log("view failed")
         }
     }
@@ -374,7 +411,8 @@ function ListCard(props) {
     async function handleComment(event){
         if(auth.user.email=="Guest-reserved-email")
             return
-        if(event.key=="Enter"){
+            auth.user=(await api.getUserById(auth.user._id)).data.user
+            if(event.key=="Enter"){
             console.log(commentId)
             let response= await store.getUserTop5ListById(commentId)
             if(response){
@@ -392,21 +430,28 @@ function ListCard(props) {
                 updatedInfo["4"]=temp
                 temp= response[0].user.comments
 
-                temp[response[1].listNumber].push(comment)
+                temp[response[1].listNumber].push(auth.user.userName +"||userName-comment-separator||" + comment)
+
+                console.log(temp[response[1].listNumber])
 
                 updatedInfo["5"]=temp
                 if(store.idNamePairs && store.idNamePairs[0] && store.idNamePairs[0].votes){ //check if lists have votes, if yes, then its a community list
                     let communityList= (await api.getCommunityTop5ListById(commentId)).data.top5List
-                    communityList.comments.push(comment)
+                    communityList.comments.push(auth.user.userName +"||userName-comment-separator||" + comment)
                     await api.updateCommunityTop5ListById(commentId,communityList)
                 }else{
                     let newUserData= await api.updateUser(email, updatedInfo)
                     auth.user=(await api.getUserById(auth.user._id)).data.user
                 }
 
-                store.loadIdNamePairs(selectedIcon)
+                store.loadIdNamePairs()
 
             }else{
+                if(store.idNamePairs && store.idNamePairs[0] && store.idNamePairs[0].votes){ //check if lists have votes, if yes, then its a community list
+                    let communityList= (await api.getCommunityTop5ListById(commentId)).data.top5List
+                    communityList.comments.push(auth.user.userName +"||userName-comment-separator||" + comment)
+                    await api.updateCommunityTop5ListById(commentId,communityList)
+                }
                 console.log("handleComment failed")
             }
         }
@@ -490,8 +535,8 @@ function ListCard(props) {
             {
                 idNamePair.comments.map((val) => (
                     <div style={{width:"100%", position:"relative", height:"100px",fontSize:"12", contain:"strict",backgroundColor:"orange", borderRadius:"15px",marginBottom:10,whiteSpace:"normal"}}>
-                    <div><Typography variant="h6" color="blue" style={{marginLeft:10, fontSize:8}}> {idNamePair.author} </Typography></div>
-                    <Typography variant="h6" color="black" style={{marginLeft:10, fontSize:12,}}> {val} </Typography>
+                    <div><Typography variant="h6" color="blue" style={{marginLeft:10, fontSize:8}}> {val.split("||userName-comment-separator||")[0]} </Typography></div>
+                    <Typography variant="h6" color="black" style={{marginLeft:10, fontSize:12,}}> {val.substring(val.indexOf("||userName-comment-separator||")+30)} </Typography>
                     </div>
                 ))
             }

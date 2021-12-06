@@ -67,10 +67,12 @@ export default function SplashScreen() {
   async function continueAsGuest(){
 
         auth.logIn({
+          userName:"Guest-reserved-userName",
           email: "Guest-reserved-email",
           password: "guest-password"
         }, store)
         let newUser =  await auth.registerUser({
+          userName:"Guest-reserved-userName",
           firstName: "Guest",
           lastName: " ",
           email: "Guest-reserved-email",

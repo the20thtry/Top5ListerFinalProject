@@ -24,8 +24,9 @@ export default function ResponsiveDialog() {
     event.stopPropagation();
     let theListItself=event.target.parentElement.parentElement.parentElement.parentElement
     let listName =theListItself.getElementsByClassName("MuiBox-root css-1mm12im")[0].innerHTML
-    listName=listName.split("<br>By:")[0]
-    
+    listName=listName.split("</h3><br>")[0]
+    listName=listName.split("h3 class=\"MuiTypography-root MuiTypography-h3 css-gepadz-MuiTypography-root\">")[1]
+    console.log(store.idNamePairs)
     store.markListForDeletion(theListItself.id)
     setOpen(listName);
   };

@@ -602,20 +602,25 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.createTop5CommunityListById = async function (id){ //called when a new list is published
+        try{
         let top5list= (await api.getTop5ListById(id)).data.top5List
         top5list["email"]=auth.user.email
         top5list["votes"]=[5,4,3,2,1]
-        let response = await api.getAllCommunityTop5List()
-        if(response){ //check if the list is already a community list
-            let communityLists=response.data.data
-            for(let i=0;i<communityLists.length;i++){
-                if(communityLists[i].name==top5list["name"])
-                    return;
+            let response = await api.getAllCommunityTop5List()
+            if(response){ //check if the list is already a community list
+                let communityLists=response.data.data
+                for(let i=0;i<communityLists.length;i++){
+                    if(communityLists[i].name==top5list["name"])
+                        return;
+                }
+                top5list["comments"]=[]
+                top5list["views"]=0
+                top5list["likes"]=[[],[]]
+                await api.createCommunityTop5List(top5list)
             }
-            top5list["comments"]=[]
-            top5list["views"]=0
-            top5list["likes"]=[[],[]]
-            await api.createCommunityTop5List(top5list)
+        }
+        catch{
+            console.log("no")
         }
     }
 

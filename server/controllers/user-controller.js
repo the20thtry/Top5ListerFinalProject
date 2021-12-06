@@ -90,6 +90,7 @@ getLoggedIn = async (req, res) => {
                 author:loggedInUser.author,
                 publishedDate:loggedInUser.publishedDate,
                 views:loggedInUser.views,
+                userName:loggedInUser.userName,
                 comments:loggedInUser.comments
             }
         })//.send() //I got rid of it and it got rid of some bugs but idk if this is smart
@@ -110,8 +111,8 @@ getLoggedOut = async (req, res) => {
 
 login = async (req, res) => {
     try{
-        const { email, password} = req.body;
-        const existingUser = await User.findOne({ email: email });
+        const { userName, password} = req.body;
+        const existingUser = await User.findOne({ userName: userName });
         if(existingUser){
             correctPassword = await (bcrypt.compare(password,existingUser.passwordHash))
                 if (!correctPassword) {
@@ -141,6 +142,7 @@ login = async (req, res) => {
                             author:existingUser.author,
                             publishedDate:existingUser.publishedDate,
                             views:existingUser.views,
+                            userName:existingUser.userName,
                             comments:existingUser.comments
                         }
                     }).send();
@@ -166,8 +168,8 @@ login = async (req, res) => {
 
 registerUser = async (req, res) => {
     try {
-        const { firstName, lastName, email, password, passwordVerify} = req.body;
-        if (!firstName || !lastName || !email || !password || !passwordVerify) {
+        const { firstName, lastName, email, password, passwordVerify, userName} = req.body;
+        if (!firstName || !lastName || !email || !password || !passwordVerify || !userName) {
             return res
                 .status(400)
                 .json({ errorMessage: "Please enter all required fields." });
@@ -186,7 +188,16 @@ registerUser = async (req, res) => {
                     errorMessage: "Please enter the same password twice."
                 })
         }
-        const existingUser = await User.findOne({ email: email });
+        let existingUser = await User.findOne({ email: email });
+        if (existingUser) {
+            return res
+                .status(400)
+                .json({
+                    success: false,
+                    errorMessage: "An account with this email address already exists."
+                })
+        }
+        existingUser = await User.findOne({ userName: userName });
         if (existingUser) {
             return res
                 .status(400)
@@ -207,7 +218,7 @@ registerUser = async (req, res) => {
         let views=[]
         let comments=[]
         const newUser = new User({
-            firstName, lastName, email, passwordHash,items, likes, author, publishedDate,views,comments
+            firstName, lastName, email, passwordHash,items, likes, author, publishedDate,views,comments, userName
         });
         const savedUser = await newUser.save();
         
@@ -223,6 +234,7 @@ registerUser = async (req, res) => {
             success: true,
             user: {
                 firstName: savedUser.firstName,
+                userName:savedUser.userName,
                 lastName: savedUser.lastName,
                 email: savedUser.email,
                 items: savedUser.items,
